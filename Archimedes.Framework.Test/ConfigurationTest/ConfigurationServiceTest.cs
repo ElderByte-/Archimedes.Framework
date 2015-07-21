@@ -1,4 +1,5 @@
 ﻿using Archimedes.Framework.Configuration;
+using Archimedes.Framework.Configuration.Properties;
 using NUnit.Framework;
 
 namespace Archimedes.Framework.Test.ConfigurationTest
@@ -8,9 +9,15 @@ namespace Archimedes.Framework.Test.ConfigurationTest
         [TestCase()]
         public void TestLoadHidden()
         {
-            var configurationService = new ConfigurationService();
+            var configurationService = new EnvironmentService();
 
-            configurationService.LoadConfiguration("/test.password.$hidden", "MTMzN2wzM3Q="); // base64("1337l33t")
+            var memoryConfiguration = new MemoryPropertySource()
+                .AddProperty("test.password.$hidden", "MTMzN2wzM3Q=");
+
+            configurationService.PropertySources.Add(memoryConfiguration);
+            configurationService.Refresh();
+
+
             Assert.AreEqual("1337l33t", configurationService.Configuration.Get("test.password"));
         }
     }

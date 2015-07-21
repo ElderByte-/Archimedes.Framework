@@ -12,8 +12,7 @@ namespace Archimedes.Framework.Test.ConfigurationTest
         {
             ApplicationContext.Instance.EnableAutoConfiguration();
 
-            var context = ApplicationContext.Instance.GetContext();
-            var configuration = context.Resolve<IConfigurationService>().Configuration;
+            var configuration = ApplicationContext.Instance.Environment.Configuration;
             configuration.Set("test.simpleString", "MyTest");
             configuration.Set("test.simpleNumber", 12.ToString());
             configuration.Set("test.nullableNumber", 33.ToString());
@@ -21,8 +20,8 @@ namespace Archimedes.Framework.Test.ConfigurationTest
             var date = DateTime.Now;
             configuration.Set("test.simpleDate", date.ToString(CultureInfo.InvariantCulture));
 
-
-            var valueService = context.Resolve<ServiceConfigTarget>();
+            var container = ApplicationContext.Instance.Container;
+            var valueService = container.Resolve<ServiceConfigTarget>();
 
             Assert.AreEqual("MyTest", valueService.simpleStringValue);
             Assert.AreEqual(12, valueService.simpleIntValue);

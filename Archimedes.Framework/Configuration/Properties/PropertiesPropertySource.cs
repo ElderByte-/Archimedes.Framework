@@ -1,30 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using log4net;
 
-namespace Archimedes.Framework.Configuration
+namespace Archimedes.Framework.Configuration.Properties
 {
-    /// <summary>
-    /// Parses a property file in the standard spring java format.
-    /// </summary>
-    public static class PropertiesFileParser
+    public class PropertiesPropertySource : IPropertySource
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly Regex KeyValueParser = new Regex("(.*?)=(.*)");
+        private readonly string _rawPropertiesData;
 
-        public static Dictionary<string, string> Parse(string propertiesFile)
+        /// <summary>
+        /// Creates a new PropertiesPropertySource with the raw properties data.
+        /// It will be parsed on load into a property store.
+        /// </summary>
+        /// <param name="rawPropertiesData"></param>
+        public PropertiesPropertySource(string rawPropertiesData)
         {
-            return Parse(File.ReadAllLines(propertiesFile));
+            if (rawPropertiesData == null) throw new ArgumentNullException("rawPropertiesData");
+
+            _rawPropertiesData = rawPropertiesData;
         }
 
+        public PropertyStore Load()
+        {
+            var properties = new PropertyStore();
 
-        public static Dictionary<string, string> Parse(string[] propertyLines)
+            var tmp = Parse(_rawPropertiesData);
+            properties.Merge(tmp);
+
+            return properties;
+        }
+
+        #region Private methods
+
+        private Dictionary<string, string> Parse(string rawpropertyData)
+        {
+            string[] lines = Regex.Split(rawpropertyData, @"\r?\n|\r");
+            return Parse(lines);
+        }
+
+        private Dictionary<string, string> Parse(string[] propertyLines)
         {
             var properties = new Dictionary<string, string>();
-            
+
 
             foreach (var propertyLine in propertyLines)
             {
@@ -46,7 +67,7 @@ namespace Archimedes.Framework.Configuration
             return properties;
         }
 
-        public static Tuple<string,string> ParseLine(string propertyLine)
+        private Tuple<string, string> ParseLine(string propertyLine)
         {
             if (!propertyLine.Trim().StartsWith("#"))
             {
@@ -61,6 +82,6 @@ namespace Archimedes.Framework.Configuration
             return null;
         }
 
-
+        #endregion
     }
 }

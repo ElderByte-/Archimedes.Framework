@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Archimedes.Patterns;
 
-namespace Archimedes.Framework.Configuration
+namespace Archimedes.Framework.Configuration.Properties
 {
     /// <summary>
     /// Represents properties as a simple key-value store
     /// </summary>
-    public class Properties
+    public class PropertyStore
     {
         private readonly Dictionary<string, string> _parameters = new Dictionary<string, string>();
-
 
         /// <summary>
         /// Creates an empty properties object.
         /// </summary>
-        public Properties()
+        public PropertyStore()
         {
             
         }
@@ -104,7 +103,7 @@ namespace Archimedes.Framework.Configuration
         /// Merges the given parameter set into this configuration
         /// </summary>
         /// <param name="parameters"></param>
-        public Properties Merge(Dictionary<string, string> parameters)
+        public PropertyStore Merge(IDictionary<string, string> parameters)
         {
             foreach (var kv in parameters)
             {
@@ -113,12 +112,12 @@ namespace Archimedes.Framework.Configuration
             return this;
         }
 
-        public Properties Merge(Properties other)
+        public PropertyStore Merge(PropertyStore other)
         {
             return Merge(other._parameters);
         }
 
-        public Dictionary<string, string> ToKeyValuePairs()
+        public IDictionary<string, string> ToKeyValuePairs()
         {
             return new Dictionary<string, string>(_parameters);
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Archimedes.Framework.AOP;
 using Archimedes.Framework.Configuration;
+using Archimedes.Framework.Configuration.Properties;
 using Archimedes.Framework.DI;
 using log4net;
 
@@ -18,12 +19,11 @@ namespace Archimedes.Framework
 
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private const string _defaultContext = "_ELDER_DEFAULT";
+        private const string DefaultContext = "_ELDER_DEFAULT";
         private readonly Dictionary<string, ElderBox> _contextRegistry = new Dictionary<string, ElderBox>();
-
+        private readonly IEnvironmentService _environmentService = new EnvironmentService();
 
         private List<Type> _components = null; // Lazy initialized!
-        private  IConfigurationService _configurationService;
 
         #endregion
 
@@ -43,22 +43,30 @@ namespace Archimedes.Framework
 
         #endregion
 
-        #region Public methods
+        #region Public Properties
 
         /// <summary>
-        /// Gets the Application Context configuration.
+        /// Gets the environment which holds the basic configuration of the application
         /// </summary>
-        /// <param name="cmdArguments"></param>
-        /// <returns></returns>
-        public Properties GetConfiguration(string[] cmdArguments)
+        public IEnvironmentService Environment
         {
-            if (_configurationService == null)
-            {
-                _configurationService = new ConfigurationService();
-                _configurationService.LoadConfiguration(cmdArguments);
-            }
-            return _configurationService.Configuration;
+            get { return _environmentService; }
         }
+
+        /// <summary>
+        /// Gets the default context which is populated by the auto configuration.
+        /// </summary>
+        /// <returns></returns>
+        public ElderBox Container
+        {
+            get { return _contextRegistry[DefaultContext]; }
+        }
+
+
+        #endregion
+
+
+        #region Public methods
 
 
         /// <summary>
@@ -66,35 +74,28 @@ namespace Archimedes.Framework
         /// and makes the app ready for usage.
         /// 
         ///  Components must be marked with [Service] or [Controller].
-        /// 
         /// </summary>
-        public void EnableAutoConfiguration(string[] args = null)
+        public void EnableAutoConfiguration()
         {
-            var configuration = GetConfiguration(args);
+            Environment.Refresh();
+            var configuration = Environment.Configuration;
 
             var assemblyFiltersStr = configuration.GetOptional("archimedes.componentscan.assemblies");
             var assemblyFilters = assemblyFiltersStr.MapOptional(x => x.Split(',')).OrElse(new string[0]);
 
             var conf = new AutoModuleConfiguration(ScanComponents(assemblyFilters));
-            var ctx = RegisterContext(_defaultContext, conf);
-            ctx.RegisterInstance<IConfigurationService>(_configurationService);
+            var ctx = RegisterContext(DefaultContext, conf);
+            ctx.RegisterInstance<IEnvironmentService>(_environmentService);
         }
 
-        /// <summary>
-        /// Gets the default context which is populated by the auto configuration.
-        /// </summary>
-        /// <returns></returns>
-        public ElderBox GetContext()
-        {
-            return _contextRegistry[_defaultContext];
-        }
+        
 
         /// <summary>
         /// Get a named DI context
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public ElderBox GetContext(string name)
+        public ElderBox ContainerByName(string name)
         {
             if (_contextRegistry.ContainsKey(name))
             {

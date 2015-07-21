@@ -207,7 +207,7 @@ namespace Archimedes.Framework.DI
 
             if (valueFields.Any())
             {
-                var configurationService = (IConfigurationService)Resolve(typeof(IConfigurationService), unresolvedDependencies);
+                var configurationService = (IEnvironmentService)Resolve(typeof(IEnvironmentService), unresolvedDependencies);
 
                 var configurator = new ValueConfigurator(configurationService.Configuration);
 

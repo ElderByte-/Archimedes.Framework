@@ -1,4 +1,5 @@
 ﻿using Archimedes.Framework.Configuration;
+using Archimedes.Framework.Configuration.Properties;
 using NUnit.Framework;
 
 namespace Archimedes.Framework.Test.ConfigurationTest
@@ -12,11 +13,11 @@ namespace Archimedes.Framework.Test.ConfigurationTest
 
         public void TestParse(string propertyLine, string expectedKey, string expectedValue)
         {
-            var result = PropertiesFileParser.ParseLine(propertyLine);
+            var source = new PropertiesPropertySource(propertyLine);
 
-            Assert.AreEqual(expectedKey, result.Item1);
-            Assert.AreEqual(expectedValue, result.Item2);
+            var properties = source.Load();
 
+            Assert.AreEqual(properties.Get(expectedKey), expectedValue);
         }
 
 

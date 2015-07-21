@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Archimedes.Framework.Configuration;
+using Archimedes.Framework.Configuration.Properties;
 using log4net;
 
 namespace Archimedes.Framework.DI
@@ -15,12 +16,12 @@ namespace Archimedes.Framework.DI
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly Regex _variableReference = new Regex(@"\$\{(.*)\}");
-        private readonly Properties _configuration;
+        private readonly PropertyStore _configuration;
 
         #endregion
 
 
-        public ValueConfigurator(Properties configuration)
+        public ValueConfigurator(PropertyStore configuration)
         {
             _configuration = configuration;
         }
