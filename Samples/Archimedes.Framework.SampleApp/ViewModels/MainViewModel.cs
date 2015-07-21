@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Archimedes.Framework.SampleApp.ViewModels
 {
-    [Service]
+    //[Service]
     public class MainViewModel
     {
 

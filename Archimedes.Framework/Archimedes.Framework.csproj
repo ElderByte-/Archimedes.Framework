@@ -58,9 +58,9 @@
     <Compile Include="Configuration\EnvironmentService.cs" />
     <Compile Include="Configuration\IEnvironmentService.cs" />
     <Compile Include="Configuration\Properties\CommandLinePropertySource.cs" />
+    <Compile Include="Configuration\Properties\FilePropertiesPropertySource.cs" />
     <Compile Include="Configuration\Properties\IPropertySource.cs" />
     <Compile Include="Configuration\Properties\MemoryPropertySource.cs" />
-    <Compile Include="Configuration\Properties\FilePropertiesPropertySource.cs" />
     <Compile Include="Configuration\Properties\PropertiesPropertySource.cs" />
     <Compile Include="Configuration\Properties\PropertyStore.cs" />
     <Compile Include="Configuration\UnknownParameterException.cs" />
