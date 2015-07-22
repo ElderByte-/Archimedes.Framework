@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using log4net;
+﻿using System.IO;
 
-namespace Archimedes.Framework.Configuration.Properties
+namespace Archimedes.Framework.ContextEnvironment.Properties
 {
     public class FilePropertiesPropertySource : IPropertySource
     {

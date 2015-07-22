@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using log4net;
 
-namespace Archimedes.Framework.Configuration.Properties
+namespace Archimedes.Framework.ContextEnvironment.Properties
 {
     public class PropertiesPropertySource : IPropertySource
     {

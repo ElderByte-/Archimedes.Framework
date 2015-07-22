@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Archimedes.Patterns;
 
-namespace Archimedes.Framework.Configuration.Properties
+namespace Archimedes.Framework.ContextEnvironment.Properties
 {
     /// <summary>
     /// Represents properties as a simple key-value store

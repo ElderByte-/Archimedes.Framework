@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Archimedes.DI.AOP;
 using Archimedes.Framework.AOP;
+using Archimedes.Framework.Stereotype;
 
 namespace Archimedes.Framework.DI
 {

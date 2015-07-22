@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Archimedes.Framework.Configuration
+namespace Archimedes.Framework.DI
 {
     /// <summary>
     /// Thrown when configuring a value has failed

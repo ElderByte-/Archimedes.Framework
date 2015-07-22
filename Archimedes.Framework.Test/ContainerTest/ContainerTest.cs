@@ -1,8 +1,8 @@
 ﻿using System.Linq;
-using Archimedes.DI.AOP;
 using Archimedes.Framework.AOP;
 using Archimedes.Framework.Context;
 using Archimedes.Framework.DI;
+using Archimedes.Framework.Stereotype;
 using NUnit.Framework;
 
 namespace Archimedes.Framework.Test.ContainerTest

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Archimedes.DI.AOP;
 using Archimedes.Framework.DI;
+using Archimedes.Framework.Stereotype;
 using log4net;
 
 namespace Archimedes.Framework.AOP
@@ -10,8 +10,6 @@ namespace Archimedes.Framework.AOP
     public class AutoModuleConfiguration : ElderModuleConfiguration
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-
         private readonly IEnumerable<Type> _componentTypes;
 
         public AutoModuleConfiguration(IEnumerable<Type> componentTypes)
@@ -23,9 +21,7 @@ namespace Archimedes.Framework.AOP
         {
             foreach (var componentType in _componentTypes)
             {
-                if (componentType.IsDefined(typeof(ServiceAttribute), false) || 
-                    componentType.IsDefined(typeof(ControllerAttribute), false) || 
-                    componentType.IsDefined(typeof(ComponentAttribute), false))
+                if (ComponentUtil.IsComponent(componentType))
                 {
                     RegisterInterfaceImpl(componentType);
                     RegisterInheritanceImpl(componentType);

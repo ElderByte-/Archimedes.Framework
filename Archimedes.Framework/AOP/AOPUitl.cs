@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Archimedes.DI.AOP;
+using Archimedes.Framework.Stereotype;
 
 namespace Archimedes.Framework.AOP
 {

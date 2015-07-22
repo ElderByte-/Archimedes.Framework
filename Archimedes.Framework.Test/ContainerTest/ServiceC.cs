@@ -1,5 +1,5 @@
 ﻿using System;
-using Archimedes.DI.AOP;
+using Archimedes.Framework.Stereotype;
 
 namespace Archimedes.Framework.Test.ContainerTest
 {

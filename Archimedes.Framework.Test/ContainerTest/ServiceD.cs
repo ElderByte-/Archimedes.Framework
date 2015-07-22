@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using Archimedes.DI.AOP;
+using Archimedes.Framework.Stereotype;
 
 namespace Archimedes.Framework.Test.ContainerTest
 {

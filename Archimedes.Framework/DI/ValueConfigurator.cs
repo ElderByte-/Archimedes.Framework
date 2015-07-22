@@ -3,8 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Archimedes.Framework.Configuration;
-using Archimedes.Framework.Configuration.Properties;
+using Archimedes.Framework.ContextEnvironment.Properties;
 using log4net;
 
 namespace Archimedes.Framework.DI

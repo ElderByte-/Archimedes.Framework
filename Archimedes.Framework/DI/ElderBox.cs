@@ -4,10 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using Archimedes.DI.AOP;
 using Archimedes.Framework.AOP;
-using Archimedes.Framework.Configuration;
 using Archimedes.Framework.Context;
+using Archimedes.Framework.ContextEnvironment;
+using Archimedes.Framework.DI.Attribute;
+using Archimedes.Framework.Stereotype;
 using log4net;
 
 namespace Archimedes.Framework.DI

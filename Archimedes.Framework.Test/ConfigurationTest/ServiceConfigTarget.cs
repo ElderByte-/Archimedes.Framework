@@ -1,6 +1,6 @@
 ﻿using System;
-using Archimedes.DI.AOP;
-using Archimedes.Framework.AOP;
+using Archimedes.Framework.DI.Attribute;
+using Archimedes.Framework.Stereotype;
 
 namespace Archimedes.Framework.Test.ConfigurationTest
 {

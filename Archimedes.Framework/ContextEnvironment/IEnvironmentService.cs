@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Archimedes.Framework.Configuration.Properties;
-using Archimedes.Patterns;
+using Archimedes.Framework.ContextEnvironment.Properties;
 
-namespace Archimedes.Framework.Configuration
+namespace Archimedes.Framework.ContextEnvironment
 {
     /// <summary>
     /// Holds the global configuration of this application.

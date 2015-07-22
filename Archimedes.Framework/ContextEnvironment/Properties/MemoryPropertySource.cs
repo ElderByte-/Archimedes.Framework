@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Archimedes.Framework.Configuration.Properties
+namespace Archimedes.Framework.ContextEnvironment.Properties
 {
     /// <summary>
     /// A memory property source is usefull for runtime configuration / in code configuration

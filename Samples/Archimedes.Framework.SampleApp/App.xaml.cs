@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Windows;
-using Archimedes.Framework.Configuration.Properties;
+﻿using System.Windows;
 using Archimedes.Framework.Context;
+using Archimedes.Framework.ContextEnvironment.Properties;
 
 namespace Archimedes.Framework.SampleApp
 {

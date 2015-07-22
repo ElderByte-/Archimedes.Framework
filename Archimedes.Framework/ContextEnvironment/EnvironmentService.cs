@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using Archimedes.Framework.Configuration.Properties;
+using Archimedes.Framework.ContextEnvironment.Properties;
 using Archimedes.Patterns.Utils;
 
-namespace Archimedes.Framework.Configuration
+namespace Archimedes.Framework.ContextEnvironment
 {
     /// <summary>
     /// Holds the global configuration of this application.

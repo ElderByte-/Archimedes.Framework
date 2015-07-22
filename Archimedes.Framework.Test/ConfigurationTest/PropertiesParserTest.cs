@@ -1,5 +1,4 @@
-﻿using Archimedes.Framework.Configuration;
-using Archimedes.Framework.Configuration.Properties;
+﻿using Archimedes.Framework.ContextEnvironment.Properties;
 using NUnit.Framework;
 
 namespace Archimedes.Framework.Test.ConfigurationTest

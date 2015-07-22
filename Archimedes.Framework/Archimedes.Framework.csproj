@@ -36,8 +36,9 @@
     <AssemblyOriginatorKeyFile>Archimedes.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Archimedes.Patterns">
-      <HintPath>..\packages\Archimedes.Patterns.1.0.1.0\lib\net40\Archimedes.Patterns.dll</HintPath>
+    <Reference Include="Archimedes.Patterns, Version=1.0.3.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\archimedes.patterns.1.0.3.0\lib\net40\Archimedes.Patterns.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -54,19 +55,24 @@
     <Compile Include="AOP\AOPUitl.cs" />
     <Compile Include="AOP\AutoModuleConfiguration.cs" />
     <Compile Include="AOP\AttributeScanner.cs" />
+    <Compile Include="Context\Configuration\ConfigurationLoader.cs" />
     <Compile Include="Context\Annotation\ComponentFactoryAttribute.cs" />
     <Compile Include="Context\Annotation\ComponentScanAttribute.cs" />
     <Compile Include="Context\Annotation\ConfigurationAttribute.cs" />
     <Compile Include="Context\ApplicationContext.cs" />
-    <Compile Include="Configuration\EnvironmentService.cs" />
-    <Compile Include="Configuration\IEnvironmentService.cs" />
-    <Compile Include="Configuration\Properties\CommandLinePropertySource.cs" />
-    <Compile Include="Configuration\Properties\FilePropertiesPropertySource.cs" />
-    <Compile Include="Configuration\Properties\IPropertySource.cs" />
-    <Compile Include="Configuration\Properties\MemoryPropertySource.cs" />
-    <Compile Include="Configuration\Properties\PropertiesPropertySource.cs" />
-    <Compile Include="Configuration\Properties\PropertyStore.cs" />
-    <Compile Include="Configuration\UnknownParameterException.cs" />
+    <Compile Include="Context\Configuration\IConfigurationProvider.cs" />
+    <Compile Include="Context\Configuration\Providers\ComponentFactoryProvider.cs" />
+    <Compile Include="Context\Configuration\Providers\ComponentScanProvider.cs" />
+    <Compile Include="ContextEnvironment\ArchimedesPropertyKeys.cs" />
+    <Compile Include="ContextEnvironment\EnvironmentService.cs" />
+    <Compile Include="ContextEnvironment\IEnvironmentService.cs" />
+    <Compile Include="ContextEnvironment\Properties\CommandLinePropertySource.cs" />
+    <Compile Include="ContextEnvironment\Properties\FilePropertiesPropertySource.cs" />
+    <Compile Include="ContextEnvironment\Properties\IPropertySource.cs" />
+    <Compile Include="ContextEnvironment\Properties\MemoryPropertySource.cs" />
+    <Compile Include="ContextEnvironment\Properties\PropertiesPropertySource.cs" />
+    <Compile Include="ContextEnvironment\Properties\PropertyStore.cs" />
+    <Compile Include="ContextEnvironment\UnknownParameterException.cs" />
     <Compile Include="DI\Attribute\ValueAttribute.cs" />
     <Compile Include="DI\ValueConfigurationException.cs" />
     <Compile Include="DI\AmbiguousMappingException.cs" />
@@ -78,14 +84,18 @@
     <Compile Include="DI\ImplementationRegistry.cs" />
     <Compile Include="DI\ValueConfigurator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stereotype\ComponentAttribute.cs" />
+    <Compile Include="Stereotype\ComponentUtil.cs" />
+    <Compile Include="Stereotype\ControllerAttribute.cs" />
+    <Compile Include="Stereotype\InjectAttribute.cs" />
+    <Compile Include="Stereotype\PrimaryAttribute.cs" />
+    <Compile Include="Stereotype\ServiceAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Archimedes.snk" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Stereotype\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Archimedes.DI.AOP;
 using Archimedes.Framework.AOP;
-using Archimedes.Framework.Configuration;
+using Archimedes.Framework.Context.Configuration;
+using Archimedes.Framework.ContextEnvironment;
 using Archimedes.Framework.DI;
+using Archimedes.Framework.Stereotype;
 using log4net;
 
 namespace Archimedes.Framework.Context
@@ -65,7 +66,6 @@ namespace Archimedes.Framework.Context
 
         #endregion
 
-
         #region Public methods
 
 
@@ -78,12 +78,19 @@ namespace Archimedes.Framework.Context
         public void EnableAutoConfiguration()
         {
             Environment.Refresh();
+
+            var configurationLoader = new ConfigurationLoader(this);
+            configurationLoader.Load();
+
             var configuration = Environment.Configuration;
 
-            var assemblyFiltersStr = configuration.GetOptional("archimedes.componentscan.assemblies");
+            var assemblyFiltersStr = configuration.GetOptional(ArchimedesPropertyKeys.ComponentScanAssemblies);
             var assemblyFilters = assemblyFiltersStr.MapOptional(x => x.Split(',')).OrElse(new string[0]);
 
             var conf = new AutoModuleConfiguration(ScanComponents(assemblyFilters));
+
+            
+
             var ctx = RegisterContext(DefaultContext, conf);
             ctx.RegisterInstance<IEnvironmentService>(_environmentService);
         }
@@ -126,9 +133,7 @@ namespace Archimedes.Framework.Context
         {
             if (_components == null)
             {
-                var componentAttributes = new[] {typeof(ServiceAttribute), typeof(ComponentAttribute), typeof(ControllerAttribute)};
-
-                var componentScanner = new AttributeScanner(componentAttributes);
+                var componentScanner = ComponentUtil.BuildComponentScanner();
                 _components = componentScanner.ScanByAttribute(assemblyFilters).ToList();
             }
             return _components;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Archimedes.Framework.Configuration
+namespace Archimedes.Framework.ContextEnvironment
 {
     public class UnknownParameterException : Exception
     {

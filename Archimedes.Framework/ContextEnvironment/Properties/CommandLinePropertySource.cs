@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Archimedes.Patterns.CommandLine;
+﻿using Archimedes.Patterns.CommandLine;
 
-namespace Archimedes.Framework.Configuration.Properties
+namespace Archimedes.Framework.ContextEnvironment.Properties
 {
     public class CommandLinePropertySource : IPropertySource
     {

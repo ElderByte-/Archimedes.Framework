@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Archimedes.DI.AOP;
 using log4net;
 
 namespace Archimedes.Framework.AOP
@@ -40,8 +39,10 @@ namespace Archimedes.Framework.AOP
         /// </summary>
         /// <param name="regexAssemblyFilters">The assembly filter regular expression (pattern)</param>
         /// <returns></returns>
-        public IEnumerable<Type> ScanByAttribute(string[] regexAssemblyFilters)
+        public ISet<Type> ScanByAttribute(params string[] regexAssemblyFilters)
         {
+            var foundTypes = new HashSet<Type>();
+
             Log.Info("Assembly Attribute-Scanning restricted to: " + string.Join(", ", regexAssemblyFilters));
 
             EnsureAssembliesAreLoadedForComponentScan();
@@ -60,7 +61,7 @@ namespace Archimedes.Framework.AOP
                     foreach (var component in components)
                     {
                         Log.Debug("      * " + component.Name);
-                        yield return component;
+                        foundTypes.Add(component);
                     }
                     Log.Debug(" == == ");
                 }
@@ -71,6 +72,8 @@ namespace Archimedes.Framework.AOP
             }
             // Log ingnored
             Log.Debug(string.Format("Ignored assemblies: {0}", Environment.NewLine + string.Join(Environment.NewLine, ignoredAssemblies)));
+
+            return foundTypes;
         }
 
         #endregion
@@ -84,7 +87,7 @@ namespace Archimedes.Framework.AOP
 
             foreach (var regexAssemblyFilter in regexAssemblyFilters)
             {
-                if (Regex.IsMatch(assembly.GetName().Name, regexAssemblyFilter, RegexOptions.IgnoreCase))
+                if (regexAssemblyFilter != null && Regex.IsMatch(assembly.GetName().Name, regexAssemblyFilter, RegexOptions.IgnoreCase))
                 {
                     return true;
                 }
