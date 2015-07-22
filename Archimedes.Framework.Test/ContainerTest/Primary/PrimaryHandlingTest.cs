@@ -1,4 +1,5 @@
 ﻿using Archimedes.Framework.AOP;
+using Archimedes.Framework.Context;
 using Archimedes.Framework.DI;
 using NUnit.Framework;
 

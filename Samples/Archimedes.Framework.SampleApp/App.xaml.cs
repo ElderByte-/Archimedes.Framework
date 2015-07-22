@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using Archimedes.Framework.Configuration.Properties;
+using Archimedes.Framework.Context;
 
 namespace Archimedes.Framework.SampleApp
 {

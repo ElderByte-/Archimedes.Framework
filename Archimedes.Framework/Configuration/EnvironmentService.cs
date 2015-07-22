@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using System.Text;
 using Archimedes.Framework.Configuration.Properties;
-using Archimedes.Patterns.CommandLine;
 using Archimedes.Patterns.Utils;
 
 namespace Archimedes.Framework.Configuration

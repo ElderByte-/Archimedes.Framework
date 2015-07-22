@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using Archimedes.DI.AOP;
 using Archimedes.Framework.AOP;
 using Archimedes.Framework.Configuration;
+using Archimedes.Framework.Context;
 using log4net;
 
 namespace Archimedes.Framework.DI

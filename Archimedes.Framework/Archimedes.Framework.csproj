@@ -53,8 +53,11 @@
   <ItemGroup>
     <Compile Include="AOP\AOPUitl.cs" />
     <Compile Include="AOP\AutoModuleConfiguration.cs" />
-    <Compile Include="AOP\ComponentScanner.cs" />
-    <Compile Include="ApplicationContext.cs" />
+    <Compile Include="AOP\AttributeScanner.cs" />
+    <Compile Include="Context\Annotation\ComponentFactoryAttribute.cs" />
+    <Compile Include="Context\Annotation\ComponentScanAttribute.cs" />
+    <Compile Include="Context\Annotation\ConfigurationAttribute.cs" />
+    <Compile Include="Context\ApplicationContext.cs" />
     <Compile Include="Configuration\EnvironmentService.cs" />
     <Compile Include="Configuration\IEnvironmentService.cs" />
     <Compile Include="Configuration\Properties\CommandLinePropertySource.cs" />
@@ -64,8 +67,8 @@
     <Compile Include="Configuration\Properties\PropertiesPropertySource.cs" />
     <Compile Include="Configuration\Properties\PropertyStore.cs" />
     <Compile Include="Configuration\UnknownParameterException.cs" />
-    <Compile Include="Configuration\Values\ValueAttribute.cs" />
-    <Compile Include="Configuration\Values\ValueConfigurationException.cs" />
+    <Compile Include="DI\Attribute\ValueAttribute.cs" />
+    <Compile Include="DI\ValueConfigurationException.cs" />
     <Compile Include="DI\AmbiguousMappingException.cs" />
     <Compile Include="DI\AutowireException.cs" />
     <Compile Include="DI\CircularDependencyException.cs" />
@@ -79,6 +82,9 @@
   <ItemGroup>
     <None Include="Archimedes.snk" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Stereotype\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

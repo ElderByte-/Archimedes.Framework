@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Archimedes.Framework.Configuration;
+using Archimedes.Framework.Context;
 using NUnit.Framework;
 
 namespace Archimedes.Framework.Test.ConfigurationTest

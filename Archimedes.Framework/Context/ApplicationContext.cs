@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Archimedes.DI.AOP;
 using Archimedes.Framework.AOP;
 using Archimedes.Framework.Configuration;
-using Archimedes.Framework.Configuration.Properties;
 using Archimedes.Framework.DI;
 using log4net;
 
-namespace Archimedes.Framework
+namespace Archimedes.Framework.Context
 {
     /// <summary>
     /// Represents the Application Context, which provides component scanning / auto-configuration.
@@ -126,8 +126,10 @@ namespace Archimedes.Framework
         {
             if (_components == null)
             {
-                var scanner = new ComponentScanner();
-                _components = scanner.ScanComponents(assemblyFilters).ToList();
+                var componentAttributes = new[] {typeof(ServiceAttribute), typeof(ComponentAttribute), typeof(ControllerAttribute)};
+
+                var componentScanner = new AttributeScanner(componentAttributes);
+                _components = componentScanner.ScanByAttribute(assemblyFilters).ToList();
             }
             return _components;
         }
