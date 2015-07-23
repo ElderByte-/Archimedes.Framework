@@ -3,23 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using Archimedes.Framework.AOP;
 using Archimedes.Framework.Stereotype;
 
 namespace Archimedes.Framework.DI.Factories
 {
 
 
-    public class TypeComponentFactory : IComponentFactory
+    public class TypeComponentFactory : ComponentFactoryBase
     {
         private readonly Type _implementationType;
 
-        public TypeComponentFactory(Type implementationType)
+        public TypeComponentFactory(Type implementationType, string implementationName, bool isPrimary, Type[] primaryForTypes)
+            :base(implementationName, isPrimary, primaryForTypes)
         {
-            this._implementationType = implementationType;
+            if(implementationType == null) throw new ArgumentNullException("implementationType");
+
+            _implementationType = implementationType;
         }
 
 
-        public object CreateInstance(ElderBox ctx, HashSet<Type> unresolvedDependencies, object[] providedParameters = null)
+        public override object CreateInstance(ElderBox ctx, HashSet<Type> unresolvedDependencies, object[] providedParameters = null)
         {
             if (unresolvedDependencies == null) throw new ArgumentNullException("unresolvedDependencies");
             if (providedParameters == null) providedParameters = new object[0];
@@ -50,12 +54,17 @@ namespace Archimedes.Framework.DI.Factories
 
                 ctx.Autowire(rawInstance, unresolvedDependencies);
 
-                var parameters = ctx.AutowireParameters(_implementationType, constructor, unresolvedDependencies, providedParameters);
+                var parameters = ctx.AutowireParameters(_implementationType, constructor.GetParameters(), unresolvedDependencies, providedParameters);
                 constructor.Invoke(rawInstance, parameters);
                 return rawInstance;
             }
 
             throw new NotSupportedException("Can not create an instance for type " + _implementationType.Name + " - no viable (public/protected) constructor in the available " + allConstructors.Count() + " found!");
+        }
+
+        public override string ToString()
+        {
+            return _implementationType.ToString();
         }
     }
 

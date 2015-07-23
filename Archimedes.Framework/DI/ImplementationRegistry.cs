@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Archimedes.Framework.AOP;
+using Archimedes.Framework.DI.Factories;
 using Archimedes.Framework.Stereotype;
 
 namespace Archimedes.Framework.DI
@@ -15,11 +16,10 @@ namespace Archimedes.Framework.DI
         #region Fields
 
         private readonly Type _iface; // Just used for better exception texts
-        private readonly List<Type> _anonymousImpls = new List<Type>();
-        private readonly Dictionary<string, Type> _namedImpls = new Dictionary<string, Type>();
+        private readonly List<IComponentFactory> _anonymousImpls = new List<IComponentFactory>();
+        private readonly Dictionary<string, IComponentFactory> _namedImpls = new Dictionary<string, IComponentFactory>();
 
-
-        private Type _primary = null;
+        private IComponentFactory _primary = null;
 
         #endregion
 
@@ -27,6 +27,8 @@ namespace Archimedes.Framework.DI
 
         public ImplementationRegistry(Type iface)
         {
+            if (iface == null) throw new ArgumentNullException("iface");
+
             _iface = iface;
         }
 
@@ -40,7 +42,7 @@ namespace Archimedes.Framework.DI
         /// <param name="name"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
-        public Type TryGetImplementation(string name = null)
+        public IComponentFactory TryGetImplementation(string name = null)
         {
             // First priority is a named implementation
             if (name != null)
@@ -78,22 +80,21 @@ namespace Archimedes.Framework.DI
         /// Register a new implementation
         /// </summary>
         /// <param name="impl"></param>
-        public void Register(Type impl)
+        public void Register(IComponentFactory impl)
         {
-            var attr = AOPUitl.GetComponentAttribute(impl);
-            string name = attr.Name;
+            if(impl == null) throw new ArgumentNullException("impl");
 
-            if (name != null)
+            if (impl.ImplementationName != null)
             {
-                if (!_namedImpls.ContainsKey(name))
+                if (!_namedImpls.ContainsKey(impl.ImplementationName))
                 {
-                    _namedImpls.Add(name, impl);
+                    _namedImpls.Add(impl.ImplementationName, impl);
                     _anonymousImpls.Add(impl);
                 }
                 else
                 {
-                    var offendingImpl = _namedImpls[name];
-                    throw new AmbiguousMappingException("A implementation of "+_iface.Name+" has ambiguous name " + name + " which already exists! Implementation " + offendingImpl.Name + " collides with " + impl.Name + "!");
+                    var offendingImpl = _namedImpls[impl.ImplementationName];
+                    throw new AmbiguousMappingException("A implementation of " + _iface.Name + " has ambiguous name " + impl.ImplementationName + " which already exists! Implementation " + offendingImpl + " collides with " + impl + "!");
                 }
             }
             else
@@ -108,14 +109,12 @@ namespace Archimedes.Framework.DI
 
         #region Private methods
 
-        private void RegisterPrimary(Type impl)
+        private void RegisterPrimary(IComponentFactory impl)
         {
-            var primaryAttr = AOPUitl.GetPrimaryAttribute(impl);
-
-            if (primaryAttr != null)
+            if (impl.IsPrimary)
             {
                 // The Implementation has the Primary Attribute
-                if (IsPrimaryForThisIface(primaryAttr))
+                if (IsPrimaryForThisIface(impl))
                 {
                     if (_primary == null)
                     {
@@ -123,7 +122,7 @@ namespace Archimedes.Framework.DI
                     }
                     else
                     {
-                        throw new AmbiguousMappingException("The [Primary] annotation is used on more than one available implementations: " + _primary.Name + " and " + impl);
+                        throw new AmbiguousMappingException("The [Primary] annotation is used on more than one available implementations: " + _primary + " and " + impl);
                     }
                 }
             }
@@ -133,13 +132,13 @@ namespace Archimedes.Framework.DI
         /// The primary attribute allows to specify specific interface types
         /// for which it overrules.
         /// </summary>
-        /// <param name="primaryAttribute"></param>
+        /// <param name="impl"></param>
         /// <returns></returns>
-        private bool IsPrimaryForThisIface(PrimaryAttribute primaryAttribute)
+        private bool IsPrimaryForThisIface(IComponentFactory impl)
         {
-            if (primaryAttribute.PrimaryForTypes.Length == 0) return true;
+            if (impl.PrimaryForTypes == null || impl.PrimaryForTypes.Length == 0) return true;
 
-            return primaryAttribute.PrimaryForTypes.Any(primaryApplies => _iface == primaryApplies);
+            return impl.PrimaryForTypes.Any(primaryApplies => _iface == primaryApplies);
         }
 
 
@@ -149,7 +148,7 @@ namespace Archimedes.Framework.DI
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private Type FindImplementationByName(string name)
+        private IComponentFactory FindImplementationByName(string name)
         {
             if (_namedImpls.ContainsKey(name))
             {
@@ -166,12 +165,12 @@ namespace Archimedes.Framework.DI
 
         public override string ToString()
         {
-            if (_primary != null) return _primary.Name;
+            if (_primary != null) return _primary.ToString();
 
             string allImpl = "";
             foreach (var impl in _anonymousImpls)
             {
-                allImpl += impl.Name + " | ";
+                allImpl += impl.ToString() + " | ";
             }
             return allImpl;
         }

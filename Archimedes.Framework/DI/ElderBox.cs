@@ -71,7 +71,7 @@ namespace Archimedes.Framework.DI
         /// <returns></returns>
         public object Create(Type t, params object[] args)
         {
-            var factory = new TypeComponentFactory(t);
+            var factory = new TypeComponentFactory(t, null, false, null);
             return factory.CreateInstance(this, new HashSet<Type>(), args);
         }
 
@@ -254,9 +254,6 @@ namespace Archimedes.Framework.DI
 
             if (factory != null)
             {
-                // We allow only types marked with Component, Service or Controller
-                // TODO ThrowIfTypeNotComponent(typeForImplementation);
-
                 instance = factory.CreateInstance(this, unresolvedDependencies);
 
                 var typeForImplementation = instance.GetType();
@@ -277,20 +274,20 @@ namespace Archimedes.Framework.DI
             return instance;
         }
 
-       
+
         /// <summary>
         /// Resolves all parameter instances of the given constructor.
         /// </summary>
-        /// <param name="implementationType">Just used for better debug messages</param>
-        /// <param name="constructor"></param>
-        /// <param name="circularRefSet"></param>
+        /// <param name="contextInfo"></param>
+        /// <param name="parameterInfos"></param>
+        /// <param name="unresolvedDependencies"></param>
+        /// <param name="providedParameters"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
-        internal object[] AutowireParameters(Type implementationType, ConstructorInfo constructor, HashSet<Type> circularRefSet, object[] providedParameters)
+        internal object[] AutowireParameters(object contextInfo, ParameterInfo[] parameterInfos, HashSet<Type> unresolvedDependencies, object[] providedParameters)
         {
-            if (constructor == null) throw new ArgumentNullException("constructor");
+            if (parameterInfos == null) throw new ArgumentNullException("parameterInfos");
 
-            var parameterInfos = constructor.GetParameters();
             var parameters = new List<object>();
 
             foreach (var parameter in parameterInfos)
@@ -298,7 +295,7 @@ namespace Archimedes.Framework.DI
                 object paramInstance = FindParamInstance(parameter, providedParameters);
                 if (paramInstance == null)
                 {
-                    paramInstance = ResolveParameterInstance(implementationType, parameter, circularRefSet);
+                    paramInstance = ResolveParameterInstance(contextInfo, parameter, unresolvedDependencies);
                 }
                 parameters.Add(paramInstance);
             }
@@ -308,28 +305,28 @@ namespace Archimedes.Framework.DI
         /// <summary>
         /// Returns the instance for a parameter type
         /// </summary>
-        /// <param name="implementationType"></param>
+        /// <param name="contextInfo"></param>
         /// <param name="parameterInfo"></param>
-        /// <param name="circularRefSet"></param>
+        /// <param name="unresolvedDependencies"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
-        private object ResolveParameterInstance(Type implementationType, ParameterInfo parameterInfo, HashSet<Type> circularRefSet)
+        private object ResolveParameterInstance(object contextInfo, ParameterInfo parameterInfo, HashSet<Type> unresolvedDependencies)
         {
             object parameter;
             try
             {
-                if (circularRefSet.Contains(parameterInfo.ParameterType))
+                if (unresolvedDependencies.Contains(parameterInfo.ParameterType))
                 {
-                    throw new CircularDependencyException(implementationType, parameterInfo.ParameterType);
+                    throw new CircularDependencyException(contextInfo, parameterInfo.ParameterType);
                 }
-                var paramInstance = Resolve(parameterInfo.ParameterType, circularRefSet); // Recursive call
+                var paramInstance = Resolve(parameterInfo.ParameterType, unresolvedDependencies); // Recursive call
                 if (paramInstance != null)
                 {
                     parameter = paramInstance;
                 }
                 else
                 {
-                    throw new NotSupportedException("Could not resolve parameter " + parameterInfo.Name + " of " + implementationType + ", the value was (null)!");
+                    throw new NotSupportedException("Could not resolve parameter " + parameterInfo.Name + " of " + contextInfo + ", the value was (null)!");
                 }
             }
             catch (Exception e)
@@ -338,7 +335,7 @@ namespace Archimedes.Framework.DI
                 {
                     throw;
                 }
-                throw new AutowireException("Autowiring constructor parameter " + parameterInfo.Name + " (" + parameterInfo.ParameterType.Name + ") of " + implementationType + " has failed!", e);
+                throw new AutowireException("Autowiring constructor parameter " + parameterInfo.Name + " (" + parameterInfo.ParameterType.Name + ") of " + contextInfo + " has failed!", e);
             }
 
             return parameter;

@@ -10,12 +10,20 @@ namespace Archimedes.Framework.Context.Configuration
 {
     public class ConfigurationLoader
     {
+        #region Fields
+
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly List<IConfigurationProvider> _configurationProcessors = new List<IConfigurationProvider>();
 
         private readonly ApplicationContext _ctx;
 
+        #endregion
+
+        /// <summary>
+        /// Creates a new configuration loader for the given application context.
+        /// </summary>
+        /// <param name="ctx">The application context</param>
         public ConfigurationLoader(ApplicationContext ctx)
         {
             _ctx = ctx;
@@ -23,11 +31,19 @@ namespace Archimedes.Framework.Context.Configuration
             ConfigurationProcessors.Add(new ComponentFactoryProvider());
         }
 
+        #region Public Properties
 
+        /// <summary>
+        /// Holds the registered configuration processors.
+        /// </summary>
         public List<IConfigurationProvider> ConfigurationProcessors
         {
             get { return _configurationProcessors; }
         }
+
+        #endregion
+
+        #region Public methods
 
         /// <summary>
         /// Loads the configuration
@@ -43,6 +59,8 @@ namespace Archimedes.Framework.Context.Configuration
                 LoadConfiguration(configurationType);
             }
         }
+
+        #endregion
 
         #region Private methods
 

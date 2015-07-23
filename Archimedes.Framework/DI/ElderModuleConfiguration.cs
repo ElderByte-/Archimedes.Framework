@@ -13,9 +13,14 @@ namespace Archimedes.Framework.DI
     /// </summary>
     public abstract class ElderModuleConfiguration : IModuleConfiguration
     {
+        #region Fields
+
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly Dictionary<Type, ImplementationRegistry> _componentRegistry = new Dictionary<Type, ImplementationRegistry>();
 
+        #endregion
+
+        #region Public methods
 
         /// <summary>
         /// Called before the dependency container is being constructed.
@@ -33,22 +38,74 @@ namespace Archimedes.Framework.DI
         public abstract void ConfigureInternal();
 
 
-
         public IComponentFactory GetFactoryForType(Type type)
         {
-            var implementationType = GetImplementaionTypeFor(type) ?? type;
+            return GetImplementaionTypeFor(type);
+        }
 
-            ThrowIfTypeNotComponent(implementationType);
 
+        /// <summary>
+        /// Registers a component as a singleton.
+        /// </summary>
+        public void RegisterSingleton<TInterface, TImplemention>()
+            where TImplemention : TInterface
+        {
+            RegisterSingleton(typeof(TInterface), typeof(TImplemention));
+        }
+
+        /// <summary>
+        /// Registers a component as a singleton.
+        /// </summary>
+        public void RegisterSingleton(Type iface, Type implementationType)
+        {
             if (CanCreateInstance(implementationType))
             {
-
-                return new TypeComponentFactory(implementationType);
+                if (AOPUitl.IsTypeComponent(implementationType))
+                {
+                    RegisterFactory(iface, FromComponentType(implementationType));
+                }
+                else
+                {
+                    RegisterFactory(iface, new TypeComponentFactory(implementationType, null, false, null));
+                }
             }
             else
             {
-                throw new NotSupportedException(string.Format("Can not create an instance of type {0}", implementationType));
+                throw new NotSupportedException(String.Format("Can not create an instance of type {0}", implementationType));
             }
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private void RegisterFactory(Type iface, IComponentFactory factory)
+        {
+            if (!_componentRegistry.ContainsKey(iface))
+            {
+                _componentRegistry.Add(iface, new ImplementationRegistry(iface));
+            }
+
+            _componentRegistry[iface].Register(factory);
+        }
+
+        private TypeComponentFactory FromComponentType(Type implementationType)
+        {
+            var component = AOPUitl.GetComponentAttribute(implementationType);
+            var implementationName = component.Name;
+
+            bool isPrimary = false;
+            Type[] primaryForTypes = null;
+
+
+            var primary = AOPUitl.GetPrimaryAttribute(implementationType);
+            if (primary != null)
+            {
+                isPrimary = true;
+                primaryForTypes = primary.PrimaryForTypes;
+            }
+
+            return new TypeComponentFactory(implementationType, implementationName, isPrimary, primaryForTypes);
         }
 
         /// <summary>
@@ -61,8 +118,7 @@ namespace Archimedes.Framework.DI
             return type.IsClass && !type.IsAbstract;
         }
 
-        [DebuggerStepThrough]
-        private Type GetImplementaionTypeFor(Type type)
+        private IComponentFactory GetImplementaionTypeFor(Type type)
         {
             if (_componentRegistry.ContainsKey(type))
             {
@@ -70,39 +126,6 @@ namespace Archimedes.Framework.DI
             }
             return null;
         }
-
-
-
-        /// <summary>
-        /// Registers a component as a singleton.
-        /// </summary>
-        protected void RegisterSingleton<TInterface, TImplemention>()
-            where TImplemention : TInterface
-        {
-            RegisterSingleton(typeof(TInterface), typeof(TImplemention));
-        }
-
-        /// <summary>
-        /// Registers a component as a singleton.
-        /// </summary>
-        protected void RegisterSingleton(Type iface, Type impl)
-        {
-            if (!_componentRegistry.ContainsKey(iface))
-            {
-                _componentRegistry.Add(iface, new ImplementationRegistry(iface));
-            }
-
-            _componentRegistry[iface].Register(impl);
-        }
-
-
-        [DebuggerStepThrough]
-        private void ThrowIfTypeNotComponent(Type type)
-        {
-            if (!AOPUitl.IsTypeComponent(type)) throw new AutowireException("The implementation " + type + " is not marked as Component and can therefore not be used." +
-                                                                              " Did you forget to add a [Service] or [Controller] annotation?");
-        }
-
         
 
         private void LogConfiguration()
@@ -116,5 +139,7 @@ namespace Archimedes.Framework.DI
                 }
             }
         }
+
+        #endregion
     }
 }

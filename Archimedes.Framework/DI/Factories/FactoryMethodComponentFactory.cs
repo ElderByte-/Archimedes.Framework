@@ -5,11 +5,26 @@ namespace Archimedes.Framework.DI.Factories
 {
 
 
-    public class FactoryMethodComponentFactory : IComponentFactory
+    public class FactoryMethodComponentFactory : ComponentFactoryBase
     {
-        public object CreateInstance(ElderBox ctx, HashSet<Type> unresolvedDependencies, object[] providedParameters = null)
+        private readonly FactoryMethod _factoryMethod;
+
+        public FactoryMethodComponentFactory(FactoryMethod factoryMethod, string implementationName, bool isPrimary, Type[] primaryForTypes)
+            : base(implementationName, isPrimary, primaryForTypes)
         {
-            throw new NotImplementedException();
+            _factoryMethod = factoryMethod;
+        }
+
+
+        public override object CreateInstance(ElderBox ctx, HashSet<Type> unresolvedDependencies, object[] providedParameters = null)
+        {
+            var parameters = ctx.AutowireParameters(null, _factoryMethod.Method.GetParameters(), unresolvedDependencies, providedParameters);
+            return _factoryMethod.Invoke(parameters);
+        }
+
+        public override string ToString()
+        {
+            return _factoryMethod.ToString();
         }
     }
 

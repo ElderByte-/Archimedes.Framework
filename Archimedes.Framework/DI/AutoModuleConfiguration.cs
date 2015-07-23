@@ -26,12 +26,16 @@ namespace Archimedes.Framework.AOP
                     RegisterInterfaceImpl(componentType);
                     RegisterInheritanceImpl(componentType);
                 }
+                else
+                {
+                    throw new NotSupportedException("All component types must have a Component derived attribute!");
+                }
             }
         }
 
         private void RegisterInheritanceImpl(Type componentType)
         {
-            Type t = componentType.BaseType;
+            Type t = componentType;
             while (t != null && !(t == typeof(Object)))
             {
                 RegisterSingleton(t, componentType);
