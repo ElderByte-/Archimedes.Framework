@@ -23,7 +23,6 @@ namespace Archimedes.Framework.DI
 
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-
         private readonly Dictionary<Type, object> _serviceRegistry = new Dictionary<Type, object>();
         private readonly IModuleConfiguration _configuration;
         private readonly string _name;
@@ -118,6 +117,11 @@ namespace Archimedes.Framework.DI
             Autowire(instance, new HashSet<Type>());
         }
 
+        public void RegisterInstance<T>(T serviceInstance)
+        {
+            UpdateSingletonInstance(typeof(T), serviceInstance);
+        }
+
         #endregion
 
         #region Private methods
@@ -150,7 +154,7 @@ namespace Archimedes.Framework.DI
         /// <param name="instance"></param>
         /// <param name="unresolvedDependencies"></param>
         [DebuggerStepThrough]
-        private void Autowire(object instance, HashSet<Type> unresolvedDependencies)
+        internal void Autowire(object instance, HashSet<Type> unresolvedDependencies)
         {
             try
             {
@@ -320,7 +324,7 @@ namespace Archimedes.Framework.DI
                 Autowire(rawInstance, unresolvedDependencies);
 
                 var parameters = AutowireParameters(implementationType, constructor, unresolvedDependencies, providedParameters);
-                var obj = constructor.Invoke(rawInstance, parameters);
+                constructor.Invoke(rawInstance, parameters);
                 return rawInstance;
             }
 
@@ -336,7 +340,7 @@ namespace Archimedes.Framework.DI
         /// <param name="circularRefSet"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
-        private object[] AutowireParameters(Type implementationType, ConstructorInfo constructor, HashSet<Type> circularRefSet, object[] providedParameters)
+        internal object[] AutowireParameters(Type implementationType, ConstructorInfo constructor, HashSet<Type> circularRefSet, object[] providedParameters)
         {
             if (constructor == null) throw new ArgumentNullException("constructor");
 
@@ -440,11 +444,6 @@ namespace Archimedes.Framework.DI
         public override string ToString()
         {
             return ContextName + " holding " + _serviceRegistry.Count + " entries!";
-        }
-
-        public void RegisterInstance<T>(T serviceInstance)
-        {
-            UpdateSingletonInstance(typeof(T), serviceInstance);
         }
     }
 }

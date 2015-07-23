@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AOP\AOPUitl.cs" />
-    <Compile Include="AOP\AutoModuleConfiguration.cs" />
+    <Compile Include="DI\AutoModuleConfiguration.cs" />
     <Compile Include="AOP\AttributeScanner.cs" />
     <Compile Include="Context\Configuration\ConfigurationLoader.cs" />
     <Compile Include="Context\Annotation\ComponentFactoryAttribute.cs" />
@@ -74,6 +74,9 @@
     <Compile Include="ContextEnvironment\Properties\PropertyStore.cs" />
     <Compile Include="ContextEnvironment\UnknownParameterException.cs" />
     <Compile Include="DI\Attribute\ValueAttribute.cs" />
+    <Compile Include="DI\Factories\TypeComponentFactory.cs" />
+    <Compile Include="DI\Factories\FactoryMethodComponentFactory.cs" />
+    <Compile Include="DI\Factories\IComponentFactory.cs" />
     <Compile Include="DI\ValueConfigurationException.cs" />
     <Compile Include="DI\AmbiguousMappingException.cs" />
     <Compile Include="DI\AutowireException.cs" />

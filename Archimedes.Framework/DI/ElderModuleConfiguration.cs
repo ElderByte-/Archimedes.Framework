@@ -30,7 +30,7 @@ namespace Archimedes.Framework.DI
         public abstract void ConfigureInternal();
 
         /// <summary>
-        /// Registers a service as a singleton.
+        /// Registers a component as a singleton.
         /// </summary>
         protected void RegisterSingleton<TInterface, TImplemention>()
             where TImplemention : TInterface
@@ -38,6 +38,9 @@ namespace Archimedes.Framework.DI
             RegisterSingleton(typeof(TInterface), typeof(TImplemention));
         }
 
+        /// <summary>
+        /// Registers a component as a singleton.
+        /// </summary>
         protected void RegisterSingleton(Type iface, Type impl)
         {
             if (!_componentRegistry.ContainsKey(iface))
