@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
-using Archimedes.Framework.AOP;
 using Archimedes.Framework.Context;
 using Archimedes.Framework.ContextEnvironment;
 using Archimedes.Framework.DI.Attribute;
+using Archimedes.Framework.DI.Factories;
 using Archimedes.Framework.Stereotype;
 using log4net;
 
@@ -72,7 +71,8 @@ namespace Archimedes.Framework.DI
         /// <returns></returns>
         public object Create(Type t, params object[] args)
         {
-            return CreateInstance(t, new HashSet<Type>(), args);
+            var factory = new TypeComponentFactory(t);
+            return factory.CreateInstance(this, new HashSet<Type>(), args);
         }
 
 
@@ -241,24 +241,25 @@ namespace Archimedes.Framework.DI
             if(type == null) throw new ArgumentNullException("type");
 
             object instance = null;
-            // First check if we have a mapping for the given type
-            Type implementationType = _configuration.GetImplementaionTypeFor(type);
-            var typeForImplementation = implementationType ?? type;
-
 
             // Maybe this type has already been created
-            if (_serviceRegistry.ContainsKey(typeForImplementation))
+            if (_serviceRegistry.ContainsKey(type))
             {
-                return _serviceRegistry[typeForImplementation];
+                return _serviceRegistry[type];
             }
 
+            // First check if we have a mapping for the given type
+            var factory = _configuration.GetFactoryForType(type);
 
-            if (CanCreateInstance(typeForImplementation))
+
+            if (factory != null)
             {
                 // We allow only types marked with Component, Service or Controller
-                ThrowIfTypeNotComponent(typeForImplementation);
+                // TODO ThrowIfTypeNotComponent(typeForImplementation);
 
-                instance = CreateInstance(typeForImplementation, unresolvedDependencies);
+                instance = factory.CreateInstance(this, unresolvedDependencies);
+
+                var typeForImplementation = instance.GetType();
 
                 // Successfully resolved the instance:
                 UpdateSingletonInstance(typeForImplementation, instance);
@@ -270,68 +271,13 @@ namespace Archimedes.Framework.DI
             }
             else
             {
-                throw new AutowireException("Can not create instance for type '" + type.Name + "' which was resolved to implementation '" + typeForImplementation.Name + "'!");
+                throw new AutowireException("Can not create instance for type '" + type.Name + "', no provider or factory found!");
             }
 
             return instance;
         }
 
-        [DebuggerStepThrough]
-        private void ThrowIfTypeNotComponent(Type type)
-        {
-            if (!AOPUitl.IsTypeComponent(type)) throw new AutowireException("The implementation " + type + " is not marked as Component and can therefore not be used." +
-                                                                              " Did you forget to add a [Service] or [Controller] annotation?");
-        }
-
-        /// <summary>
-        /// Creates a new instance from the given implementaiton
-        /// </summary>
-        /// <param name="implementationType"></param>
-        /// <param name="unresolvedDependencies">Holds all types which depend on this instance</param>
-        /// <param name="providedParameters"></param>
-        /// <returns></returns>
-        [DebuggerStepThrough]
-        private object CreateInstance(Type implementationType, HashSet<Type> unresolvedDependencies, object[] providedParameters = null)
-        {
-            if (implementationType == null) throw new ArgumentNullException("implementationType");
-            if (unresolvedDependencies == null) throw new ArgumentNullException("unresolvedDependencies");
-            if (providedParameters == null) providedParameters = new object[0];
-
-
-            // Try to create an instance of the given type.
-
-            var allConstructors = implementationType.GetConstructors(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-
-            var constructor = (from c in allConstructors
-                              where c.GetCustomAttributes(typeof (InjectAttribute), false).Any()
-                              select c).FirstOrDefault();
-
-            if (constructor == null)
-            {
-                // There was no Constructor with the Inject Attribute.
-                // Just get the first available one
-                constructor = (from c in allConstructors
-                    where c.IsPublic || !c.IsPrivate
-                               select c).FirstOrDefault() ?? allConstructors.FirstOrDefault();
-            }
-
-            if (constructor != null)
-            {
-                // We have found a constructor
-
-                var rawInstance = FormatterServices.GetUninitializedObject(implementationType);
-
-                Autowire(rawInstance, unresolvedDependencies);
-
-                var parameters = AutowireParameters(implementationType, constructor, unresolvedDependencies, providedParameters);
-                constructor.Invoke(rawInstance, parameters);
-                return rawInstance;
-            }
-
-            throw new NotSupportedException("Can not create an instance for type " + implementationType.Name + " - no viable (public/protected) constructor in the available " + allConstructors.Count() + " found!");
-        }
-
-
+       
         /// <summary>
         /// Resolves all parameter instances of the given constructor.
         /// </summary>
@@ -412,16 +358,7 @@ namespace Archimedes.Framework.DI
                     select p).FirstOrDefault();
         }
 
-        /// <summary>
-        /// Is it possible to create an instance of the given type.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        private bool CanCreateInstance(Type type)
-        {
-            return type.IsClass && !type.IsAbstract;
-        }
-
+        
         /// <summary>
         /// Register the given instance as implemnetation singleton for the given type
         /// </summary>

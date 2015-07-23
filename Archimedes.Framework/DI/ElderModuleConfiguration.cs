@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using Archimedes.Framework.AOP;
+using Archimedes.Framework.DI.Factories;
 using log4net;
 
 namespace Archimedes.Framework.DI
@@ -27,7 +29,49 @@ namespace Archimedes.Framework.DI
             LogConfiguration();
         }
 
+
         public abstract void ConfigureInternal();
+
+
+
+        public IComponentFactory GetFactoryForType(Type type)
+        {
+            var implementationType = GetImplementaionTypeFor(type) ?? type;
+
+            ThrowIfTypeNotComponent(implementationType);
+
+            if (CanCreateInstance(implementationType))
+            {
+
+                return new TypeComponentFactory(implementationType);
+            }
+            else
+            {
+                throw new NotSupportedException(string.Format("Can not create an instance of type {0}", implementationType));
+            }
+        }
+
+        /// <summary>
+        /// Is it possible to create an instance of the given type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private bool CanCreateInstance(Type type)
+        {
+            return type.IsClass && !type.IsAbstract;
+        }
+
+        [DebuggerStepThrough]
+        private Type GetImplementaionTypeFor(Type type)
+        {
+            if (_componentRegistry.ContainsKey(type))
+            {
+                return _componentRegistry[type].TryGetImplementation();
+            }
+            return null;
+        }
+
+
 
         /// <summary>
         /// Registers a component as a singleton.
@@ -51,17 +95,17 @@ namespace Archimedes.Framework.DI
             _componentRegistry[iface].Register(impl);
         }
 
+
         [DebuggerStepThrough]
-        public Type GetImplementaionTypeFor(Type type)
+        private void ThrowIfTypeNotComponent(Type type)
         {
-            if (_componentRegistry.ContainsKey(type))
-            {
-                return _componentRegistry[type].TryGetImplementation();
-            }
-            return null;
+            if (!AOPUitl.IsTypeComponent(type)) throw new AutowireException("The implementation " + type + " is not marked as Component and can therefore not be used." +
+                                                                              " Did you forget to add a [Service] or [Controller] annotation?");
         }
 
-        public void LogConfiguration()
+        
+
+        private void LogConfiguration()
         {
             if (Log.IsDebugEnabled)
             {

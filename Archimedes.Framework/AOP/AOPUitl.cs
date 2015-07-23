@@ -4,7 +4,7 @@ using Archimedes.Framework.Stereotype;
 
 namespace Archimedes.Framework.AOP
 {
-    internal class AOPUitl
+    internal static class AOPUitl
     {
         private static readonly Type[] ComponentAttributs = { typeof(ServiceAttribute), typeof(ControllerAttribute), typeof(ComponentAttribute) };
         private static readonly Type PrimaryAttribute = typeof(PrimaryAttribute);
@@ -12,11 +12,15 @@ namespace Archimedes.Framework.AOP
 
         public static bool IsTypeComponent(Type type)
         {
+            if (type == null) throw new ArgumentNullException("type");
+
            return GetComponentAttribute(type) != null;
         }
 
         public static ComponentAttribute GetComponentAttribute(Type impl)
         {
+            if (impl == null) throw new ArgumentNullException("impl");
+
             foreach (var componentAttribut in ComponentAttributs)
             {
                 var attr = impl.GetCustomAttributes(componentAttribut, false);
@@ -31,6 +35,8 @@ namespace Archimedes.Framework.AOP
 
         public static PrimaryAttribute GetPrimaryAttribute(Type impl)
         {
+            if (impl == null) throw new ArgumentNullException("impl");
+
             return (PrimaryAttribute) impl.GetCustomAttributes(PrimaryAttribute, false).FirstOrDefault();
         }
     }

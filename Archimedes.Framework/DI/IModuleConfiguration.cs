@@ -1,4 +1,5 @@
 ﻿using System;
+using Archimedes.Framework.DI.Factories;
 
 namespace Archimedes.Framework.DI
 {
@@ -6,11 +7,7 @@ namespace Archimedes.Framework.DI
     {
         void Configure();
 
-        /// <summary>
-        /// Resolve the implementation type for the given type.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        Type GetImplementaionTypeFor(Type type);
+
+        IComponentFactory GetFactoryForType(Type type);
     }
 }
