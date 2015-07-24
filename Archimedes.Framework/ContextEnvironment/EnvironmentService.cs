@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using Archimedes.Framework.ContextEnvironment.Properties;
 using Archimedes.Patterns.Utils;
+using log4net;
+using log4net.Config;
 
 namespace Archimedes.Framework.ContextEnvironment
 {
@@ -13,6 +16,9 @@ namespace Archimedes.Framework.ContextEnvironment
     public class EnvironmentService : IEnvironmentService
     {
         #region Fields
+
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
 
         private const string PropertiesFileName = "application.properties";
         private readonly PropertyStore _configuration = new PropertyStore();
@@ -26,9 +32,14 @@ namespace Archimedes.Framework.ContextEnvironment
         public EnvironmentService()
         {
             if (Assembly.GetEntryAssembly() != null) // Avoid accessing assembly incase of unit tests or similar
-            {   
-                PropertySources.Add(new PropertiesPropertySource(AppUtil.ApplicaitonBinaryFolder + @"\" + PropertiesFileName));
-                PropertySources.Add(new PropertiesPropertySource(AppUtil.AppDataFolder + @"\" + PropertiesFileName));
+            {
+                PropertySources.Add(
+                    new FilePropertiesPropertySource(AppUtil.ApplicaitonBinaryFolder + @"\" + PropertiesFileName));
+                PropertySources.Add(new FilePropertiesPropertySource(AppUtil.AppDataFolder + @"\" + PropertiesFileName));
+            }
+            else
+            {
+                Log.Warn("Entry assembly not available, loading configuration from default application.properties not possible!");
             }
         }
 
@@ -61,8 +72,12 @@ namespace Archimedes.Framework.ContextEnvironment
         /// <summary>
         /// Loads all properties
         /// </summary>
+        /// <exception cref="PropertySourceException"></exception>
+         [DebuggerStepThrough]
         public void Refresh()
         {
+            Log.Info(string.Format("Refreshing environment configuration properties using {0} property sources!", PropertySources.Count));
+
             foreach (var source in PropertySources)
             {
                 var properties = source.Load();

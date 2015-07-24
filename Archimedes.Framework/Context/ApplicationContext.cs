@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Archimedes.Framework.AOP;
@@ -77,25 +78,32 @@ namespace Archimedes.Framework.Context
         /// </summary>
         public void EnableAutoConfiguration()
         {
-            Environment.Refresh();
+            try
+            {
+                Environment.Refresh();
 
-            var container = new ElderBox();
-            var ctx = RegisterContext(DefaultContext, container);
-
-
-            var configurationLoader = new ConfigurationLoader(this);
-            configurationLoader.Load();
-
-            var configuration = Environment.Configuration;
-
-            var assemblyFiltersStr = configuration.GetOptional(ArchimedesPropertyKeys.ComponentScanAssemblies);
-            var assemblyFilters = assemblyFiltersStr.MapOptional(x => x.Split(',')).OrElse(new string[0]);
+                var container = new ElderBox();
+                var ctx = RegisterContext(DefaultContext, container);
 
 
-            var configurer = new ComponentRegisterer(container.Configuration);
-            configurer.RegisterComponents(ScanComponents(assemblyFilters));
+                var configurationLoader = new ConfigurationLoader(this);
+                configurationLoader.Load();
 
-            ctx.RegisterInstance<IEnvironmentService>(_environmentService);
+                var configuration = Environment.Configuration;
+
+                var assemblyFiltersStr = configuration.GetOptional(ArchimedesPropertyKeys.ComponentScanAssemblies);
+                var assemblyFilters = assemblyFiltersStr.MapOptional(x => x.Split(',')).OrElse(new string[0]);
+
+
+                var configurer = new ComponentRegisterer(container.Configuration);
+                configurer.RegisterComponents(ScanComponents(assemblyFilters));
+
+                ctx.RegisterInstance<IEnvironmentService>(_environmentService);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
 
         

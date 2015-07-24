@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AOP\AOPUitl.cs" />
+    <Compile Include="ContextEnvironment\Properties\PropertySourceException.cs" />
     <Compile Include="Context\Annotation\ComponentBindingAttribute.cs" />
     <Compile Include="Context\Configuration\Providers\ComponentBindingProvider.cs" />
     <Compile Include="DI\ComponentRegisterer.cs" />

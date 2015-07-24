@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using log4net;
@@ -24,28 +25,39 @@ namespace Archimedes.Framework.ContextEnvironment.Properties
             _rawPropertiesData = rawPropertiesData;
         }
 
+        [DebuggerStepThrough]
         public PropertyStore Load()
         {
             var properties = new PropertyStore();
 
-            var tmp = Parse(_rawPropertiesData);
-            properties.Merge(tmp);
+            try
+            {
+                var tmp = Parse(_rawPropertiesData);
+                properties.Merge(tmp);
+            }
+            catch (FormatException e)
+            {
+                throw new PropertySourceException("Failed to parse properties data!", e);
+            }
 
             return properties;
         }
 
         #region Private methods
 
+         [DebuggerStepThrough]
         private Dictionary<string, string> Parse(string rawpropertyData)
         {
             string[] lines = Regex.Split(rawpropertyData, @"\r?\n|\r");
             return Parse(lines);
         }
 
+        [DebuggerStepThrough]
         private Dictionary<string, string> Parse(string[] propertyLines)
         {
             var properties = new Dictionary<string, string>();
 
+            Log.Info(string.Format("Loading {0} raw property lines.", propertyLines.Length));
 
             foreach (var propertyLine in propertyLines)
             {
@@ -67,9 +79,12 @@ namespace Archimedes.Framework.ContextEnvironment.Properties
             return properties;
         }
 
+        [DebuggerStepThrough]
         private Tuple<string, string> ParseLine(string propertyLine)
         {
-            if (!propertyLine.Trim().StartsWith("#"))
+            propertyLine = propertyLine.Trim();
+
+            if (!string.IsNullOrWhiteSpace(propertyLine) || !propertyLine.StartsWith("#"))
             {
                 if (KeyValueParser.IsMatch(propertyLine))
                 {
@@ -77,6 +92,10 @@ namespace Archimedes.Framework.ContextEnvironment.Properties
                     var value = KeyValueParser.Match(propertyLine).Groups[2].Value;
 
                     return new Tuple<string, string>(key, value);
+                }
+                else
+                {
+                    throw new FormatException(string.Format("Can not parse properties line, illegal format. '{0}'", propertyLine));
                 }
             }
             return null;
