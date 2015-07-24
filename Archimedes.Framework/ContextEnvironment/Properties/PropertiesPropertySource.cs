@@ -45,14 +45,12 @@ namespace Archimedes.Framework.ContextEnvironment.Properties
 
         #region Private methods
 
-         [DebuggerStepThrough]
         private Dictionary<string, string> Parse(string rawpropertyData)
         {
             string[] lines = Regex.Split(rawpropertyData, @"\r?\n|\r");
             return Parse(lines);
         }
 
-        [DebuggerStepThrough]
         private Dictionary<string, string> Parse(string[] propertyLines)
         {
             var properties = new Dictionary<string, string>();
@@ -79,26 +77,24 @@ namespace Archimedes.Framework.ContextEnvironment.Properties
             return properties;
         }
 
-        [DebuggerStepThrough]
         private Tuple<string, string> ParseLine(string propertyLine)
         {
             propertyLine = propertyLine.Trim();
 
-            if (!string.IsNullOrWhiteSpace(propertyLine) || !propertyLine.StartsWith("#"))
-            {
-                if (KeyValueParser.IsMatch(propertyLine))
-                {
-                    var key = KeyValueParser.Match(propertyLine).Groups[1].Value;
-                    var value = KeyValueParser.Match(propertyLine).Groups[2].Value;
+            if (string.IsNullOrEmpty(propertyLine) || propertyLine.StartsWith("#")) return null;
+            
 
-                    return new Tuple<string, string>(key, value);
-                }
-                else
-                {
-                    throw new FormatException(string.Format("Can not parse properties line, illegal format. '{0}'", propertyLine));
-                }
+            if (KeyValueParser.IsMatch(propertyLine))
+            {
+                var key = KeyValueParser.Match(propertyLine).Groups[1].Value;
+                var value = KeyValueParser.Match(propertyLine).Groups[2].Value;
+
+                return new Tuple<string, string>(key, value);
             }
-            return null;
+            else
+            {
+                throw new FormatException(string.Format("Can not parse properties line, illegal format. '{0}'", propertyLine));
+            }
         }
 
         #endregion
