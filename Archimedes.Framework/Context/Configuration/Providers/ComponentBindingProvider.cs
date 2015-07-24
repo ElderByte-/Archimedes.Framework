@@ -13,10 +13,9 @@ namespace Archimedes.Framework.Context.Configuration.Providers
 
         public void HandleConfiguration(ApplicationContext ctx, Type configurationType)
         {
-            var componentScans = configurationType.GetCustomAttributes(typeof(ComponentBindingAttribute), false);
-            if (componentScans.Length > 0)
+            var componentBindings = configurationType.GetCustomAttributes(typeof(ComponentBindingAttribute), false);
+            foreach (ComponentBindingAttribute componentBinding in componentBindings)
             {
-                var componentBinding = componentScans.First() as ComponentBindingAttribute;
                 ctx.Container.Configuration.RegisterSingleton(componentBinding.Iface, componentBinding.Implementation);
                 Log.Info(string.Format("Configured component binding '{0}' --> '{1}'", componentBinding.Iface, componentBinding.Implementation));
             }

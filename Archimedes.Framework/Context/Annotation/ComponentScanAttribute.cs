@@ -18,6 +18,7 @@ namespace Archimedes.Framework.Context.Annotation
 
         /// <summary>
         /// Gets the include filter regex pattern for assemblies to scan.
+        /// Use ',' as delemiter if you need multiple patterns.
         /// </summary>
         public string IncludeFilterRegex
         {
