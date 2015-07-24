@@ -70,7 +70,9 @@
     <Compile Include="Mock\MemoryCustomerRepository.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\CustomerService.cs" />
+    <Compile Include="Model\ExternalService.cs" />
     <Compile Include="Model\ICustomerRepository.cs" />
+    <Compile Include="Model\IExternalService.cs" />
     <Compile Include="Util\AppUtil.cs" />
     <Compile Include="ViewModels\CustomersViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

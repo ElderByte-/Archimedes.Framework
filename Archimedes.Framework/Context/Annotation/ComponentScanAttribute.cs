@@ -2,6 +2,10 @@
 
 namespace Archimedes.Framework.Context.Annotation
 {
+
+    /// <summary>
+    /// Indicates that the component scan should be limited to the given include-filter
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class ComponentScanAttribute : Attribute
     {

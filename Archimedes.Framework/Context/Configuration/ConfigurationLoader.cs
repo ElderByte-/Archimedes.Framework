@@ -29,6 +29,8 @@ namespace Archimedes.Framework.Context.Configuration
         {
             _ctx = ctx;
             ConfigurationProcessors.Add(new ComponentScanProvider());
+            ConfigurationProcessors.Add(new ComponentBindingProvider());
+
         }
 
         #region Public Properties

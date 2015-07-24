@@ -10,11 +10,13 @@ namespace Archimedes.Framework.SampleApp.Model
     public class CustomerService
     {
         private  readonly ICustomerRepository _customerRepository;
+        private readonly IExternalService _externalService;
 
         [Inject]
-        public CustomerService(ICustomerRepository customerRepository)
+        public CustomerService(ICustomerRepository customerRepository, IExternalService externalService)
         {
             _customerRepository = customerRepository;
+            _externalService = externalService;
         }
 
 

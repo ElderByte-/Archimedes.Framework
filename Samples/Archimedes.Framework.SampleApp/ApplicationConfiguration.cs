@@ -9,8 +9,9 @@ using Archimedes.Framework.SampleApp.Model;
 namespace Archimedes.Framework.SampleApp
 {
 
-    [Configuration]
-    [ComponentScan("Archimedes.*")]
+    [Configuration] // Marks this class as a configruation component
+    [ComponentScan("Archimedes.*")] // Restrict component-scanning to Archimedes.* assemblies
+    [ComponentBinding(typeof(IExternalService), typeof(ExternalService))] // Register a component manually
     public class ApplicationConfiguration
     {
 

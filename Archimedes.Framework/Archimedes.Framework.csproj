@@ -53,6 +53,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AOP\AOPUitl.cs" />
+    <Compile Include="Context\Annotation\ComponentBindingAttribute.cs" />
+    <Compile Include="Context\Configuration\Providers\ComponentBindingProvider.cs" />
     <Compile Include="DI\ComponentRegisterer.cs" />
     <Compile Include="AOP\AttributeScanner.cs" />
     <Compile Include="Context\Configuration\ConfigurationLoader.cs" />
