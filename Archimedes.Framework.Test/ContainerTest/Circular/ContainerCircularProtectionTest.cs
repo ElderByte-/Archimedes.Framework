@@ -11,7 +11,7 @@ namespace Archimedes.Framework.Test.ContainerTest.Circular
         [ExpectedException(typeof(CircularDependencyException))]
         public void TestCircularProtection()
         {
-            var conf = new AutoModuleConfiguration(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
+            var conf = new ComponentRegisterer(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
             var container = new ElderBox(conf);
 
             container.Resolve<ServiceY1>();
@@ -21,7 +21,7 @@ namespace Archimedes.Framework.Test.ContainerTest.Circular
         [ExpectedException(typeof(CircularDependencyException))]
         public void TestCircularProtection2()
         {
-            var conf = new AutoModuleConfiguration(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
+            var conf = new ComponentRegisterer(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
             var container = new ElderBox(conf);
 
             container.Resolve<ServiceY2>();
@@ -32,7 +32,7 @@ namespace Archimedes.Framework.Test.ContainerTest.Circular
         [ExpectedException(typeof(CircularDependencyException))]
         public void TestCircularProtectionAutowiring()
         {
-            var conf = new AutoModuleConfiguration(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
+            var conf = new ComponentRegisterer(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
             var container = new ElderBox(conf);
 
             var service = container.Resolve<ServiceA1>();

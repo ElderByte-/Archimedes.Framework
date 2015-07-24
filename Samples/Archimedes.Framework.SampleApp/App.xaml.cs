@@ -1,6 +1,9 @@
 ﻿using System.Windows;
+using System.Windows.Markup.Primitives;
 using Archimedes.Framework.Context;
 using Archimedes.Framework.ContextEnvironment.Properties;
+using Archimedes.Framework.SampleApp.ViewModels;
+using Archimedes.Framework.Stereotype;
 
 namespace Archimedes.Framework.SampleApp
 {
@@ -9,6 +12,8 @@ namespace Archimedes.Framework.SampleApp
     /// </summary>
     public partial class App : Application
     {
+        [Inject]
+        private MainViewModel _mainViewModel;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -27,6 +32,8 @@ namespace Archimedes.Framework.SampleApp
 
 
             var main = new MainWindow();
+            main.DataContext = _mainViewModel;
+
             main.Show();
 
             base.OnStartup(e);

@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using Archimedes.Framework.Context.Annotation;
 using Archimedes.Framework.ContextEnvironment;
+using log4net;
 
 namespace Archimedes.Framework.Context.Configuration.Providers
 {
     internal class ComponentScanProvider : IConfigurationProvider
     {
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+
         public void HandleConfiguration(ApplicationContext ctx, Type configurationType)
         {
             var componentScans = configurationType.GetCustomAttributes(typeof(ComponentScanAttribute), false);
@@ -17,6 +22,8 @@ namespace Archimedes.Framework.Context.Configuration.Providers
 
                 // TODO this gets lost when refresh is called
                ctx.Environment.Configuration.Set(ArchimedesPropertyKeys.ComponentScanAssemblies, filterRegex);
+
+               Log.Info(string.Format("Configured Component-Scan Filter as '{0}'", filterRegex));
             }
         }
     }

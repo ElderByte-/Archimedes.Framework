@@ -5,9 +5,14 @@ namespace Archimedes.Framework.DI
 {
     public interface IModuleConfiguration
     {
-        void Configure();
-
-
         IComponentFactory GetFactoryForType(Type type);
+
+
+        void RegisterSingleton(Type iface, Type implementationType);
+
+        void RegisterSingleton<TInterface, TImplemention>() where TImplemention : TInterface;
+
+
+        void RegisterFactoryMethod(Type iface, FactoryMethodReference factoryMethodReference);
     }
 }

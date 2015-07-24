@@ -21,9 +21,9 @@ namespace Archimedes.Framework.Test.ContainerTest.Primary
             var serviceA = context.Resolve<ServiceB>();
         }
 
-        private AutoModuleConfiguration GetConfiguration()
+        private ComponentRegisterer GetConfiguration()
         {
-            return new AutoModuleConfiguration(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
+            return new ComponentRegisterer(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
         }
     }
 }

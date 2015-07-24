@@ -61,6 +61,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ApplicationConfiguration.cs" />
+    <Compile Include="Mock\MemoryCustomerRepository.cs" />
+    <Compile Include="Model\Customer.cs" />
+    <Compile Include="Model\CustomerService.cs" />
+    <Compile Include="Model\ICustomerRepository.cs" />
+    <Compile Include="ViewModels\CustomersViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -91,9 +97,7 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\Archimedes.Framework\Archimedes.Framework.csproj">
       <Project>{49988901-c232-4f00-a8d5-9e844c6ad627}</Project>

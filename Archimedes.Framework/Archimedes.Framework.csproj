@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AOP\AOPUitl.cs" />
-    <Compile Include="DI\AutoModuleConfiguration.cs" />
+    <Compile Include="DI\ComponentRegisterer.cs" />
     <Compile Include="AOP\AttributeScanner.cs" />
     <Compile Include="Context\Configuration\ConfigurationLoader.cs" />
     <Compile Include="Context\Annotation\ComponentFactoryAttribute.cs" />
@@ -61,7 +61,6 @@
     <Compile Include="Context\Annotation\ConfigurationAttribute.cs" />
     <Compile Include="Context\ApplicationContext.cs" />
     <Compile Include="Context\Configuration\IConfigurationProvider.cs" />
-    <Compile Include="Context\Configuration\Providers\ComponentFactoryProvider.cs" />
     <Compile Include="Context\Configuration\Providers\ComponentScanProvider.cs" />
     <Compile Include="ContextEnvironment\ArchimedesPropertyKeys.cs" />
     <Compile Include="ContextEnvironment\EnvironmentService.cs" />
@@ -75,7 +74,7 @@
     <Compile Include="ContextEnvironment\UnknownParameterException.cs" />
     <Compile Include="DI\Attribute\ValueAttribute.cs" />
     <Compile Include="DI\Factories\ComponentFactoryBase.cs" />
-    <Compile Include="DI\Factories\FactoryMethod.cs" />
+    <Compile Include="DI\Factories\FactoryMethodReference.cs" />
     <Compile Include="DI\Factories\TypeComponentFactory.cs" />
     <Compile Include="DI\Factories\FactoryMethodComponentFactory.cs" />
     <Compile Include="DI\Factories\IComponentFactory.cs" />

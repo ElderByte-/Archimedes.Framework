@@ -30,16 +30,27 @@ namespace Archimedes.Framework.DI
 
         #region Constructor
 
+        public ElderBox()
+            : this(new ElderModuleConfiguration())
+        {
+        }
+
         public ElderBox(IModuleConfiguration configuration)
         {
             if (configuration == null) throw new ArgumentNullException("configuration");
-            configuration.Configure();
             _configuration = configuration;
-
             UpdateSingletonInstance(typeof(ElderBox), this); // Register the current DI container context
         }
 
         #endregion
+
+        /// <summary>
+        /// Gets the container configuration
+        /// </summary>
+        public IModuleConfiguration Configuration
+        {
+            get { return _configuration;}
+        }
 
         #region Public methods
 
@@ -117,6 +128,7 @@ namespace Archimedes.Framework.DI
             Autowire(instance, new HashSet<Type>());
         }
 
+        [Obsolete("Move all register method to configuration, add a InstanceFactoryProvider...")]
         public void RegisterInstance<T>(T serviceInstance)
         {
             UpdateSingletonInstance(typeof(T), serviceInstance);

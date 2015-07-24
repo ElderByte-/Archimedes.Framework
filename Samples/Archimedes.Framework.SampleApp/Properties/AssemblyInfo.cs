@@ -6,9 +6,9 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Archimedes.Framework.SampleApp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Archimedes Framework Sample")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("ElderByte")]
 [assembly: AssemblyProduct("Archimedes.Framework.SampleApp")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]

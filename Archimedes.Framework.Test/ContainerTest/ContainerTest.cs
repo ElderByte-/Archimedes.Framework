@@ -29,7 +29,7 @@ namespace Archimedes.Framework.Test.ContainerTest
         public void TestAutoConfiguration()
         {
             var components = ApplicationContext.Instance.ScanComponents("Archimedes.*").ToList();
-            var conf = new AutoModuleConfiguration(components);
+            var conf = new ComponentRegisterer(components);
         }
 
 
@@ -81,9 +81,9 @@ namespace Archimedes.Framework.Test.ContainerTest
             var imp = context.Resolve<ServiceX>();
         }
 
-        private AutoModuleConfiguration GetConfiguration()
+        private ComponentRegisterer GetConfiguration()
         {
-            return new AutoModuleConfiguration(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
+            return new ComponentRegisterer(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
         }
 
     }

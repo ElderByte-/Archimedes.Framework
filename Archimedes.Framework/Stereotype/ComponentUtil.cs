@@ -1,5 +1,6 @@
 ﻿using System;
 using Archimedes.Framework.AOP;
+using Archimedes.Framework.Context.Annotation;
 
 namespace Archimedes.Framework.Stereotype
 {
@@ -23,6 +24,16 @@ namespace Archimedes.Framework.Stereotype
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Checks if the given type has a configuration attribute
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool IsConfiguration(Type type)
+        {
+            return type.IsDefined(typeof (ConfigurationAttribute), false);
         }
 
         public static AttributeScanner BuildComponentScanner()

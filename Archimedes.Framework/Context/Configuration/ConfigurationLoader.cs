@@ -4,6 +4,7 @@ using System.Reflection;
 using Archimedes.Framework.AOP;
 using Archimedes.Framework.Context.Annotation;
 using Archimedes.Framework.Context.Configuration.Providers;
+using Archimedes.Framework.DI;
 using log4net;
 
 namespace Archimedes.Framework.Context.Configuration
@@ -28,7 +29,6 @@ namespace Archimedes.Framework.Context.Configuration
         {
             _ctx = ctx;
             ConfigurationProcessors.Add(new ComponentScanProvider());
-            ConfigurationProcessors.Add(new ComponentFactoryProvider());
         }
 
         #region Public Properties
@@ -54,9 +54,14 @@ namespace Archimedes.Framework.Context.Configuration
 
             var configurationTypes = FindAllConfigurationTypes();
 
+
+            var registerer = new ComponentRegisterer(_ctx.Container.Configuration);
+            registerer.RegisterComponents(configurationTypes);
+
+
             foreach (var configurationType in configurationTypes)
             {
-                LoadConfiguration(configurationType);
+
             }
         }
 

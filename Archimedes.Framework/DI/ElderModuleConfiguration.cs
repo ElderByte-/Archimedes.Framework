@@ -11,7 +11,7 @@ namespace Archimedes.Framework.DI
     /// <summary>
     /// Base class of the ElderBox DI configuration
     /// </summary>
-    public abstract class ElderModuleConfiguration : IModuleConfiguration
+    public class ElderModuleConfiguration : IModuleConfiguration
     {
         #region Fields
 
@@ -21,21 +21,6 @@ namespace Archimedes.Framework.DI
         #endregion
 
         #region Public methods
-
-        /// <summary>
-        /// Called before the dependency container is being constructed.
-        /// 
-        /// Sub classes are expected to overwrite this method and 
-        /// call <see cref="RegisterSingleton"/> to configure the module.
-        /// </summary>
-        public void Configure()
-        {
-            ConfigureInternal();
-            LogConfiguration();
-        }
-
-
-        public abstract void ConfigureInternal();
 
 
         public IComponentFactory GetFactoryForType(Type type)
@@ -73,6 +58,12 @@ namespace Archimedes.Framework.DI
             {
                 throw new NotSupportedException(String.Format("Can not create an instance of type {0}", implementationType));
             }
+        }
+
+        public void RegisterFactoryMethod(Type iface, FactoryMethodReference factoryMethodReference)
+        {
+            var factory = new FactoryMethodComponentFactory(factoryMethodReference, null, false, null);
+            RegisterFactory(iface, factory);
         }
 
         #endregion

@@ -79,6 +79,10 @@ namespace Archimedes.Framework.Context
         {
             Environment.Refresh();
 
+            var container = new ElderBox();
+            var ctx = RegisterContext(DefaultContext, container);
+
+
             var configurationLoader = new ConfigurationLoader(this);
             configurationLoader.Load();
 
@@ -87,11 +91,10 @@ namespace Archimedes.Framework.Context
             var assemblyFiltersStr = configuration.GetOptional(ArchimedesPropertyKeys.ComponentScanAssemblies);
             var assemblyFilters = assemblyFiltersStr.MapOptional(x => x.Split(',')).OrElse(new string[0]);
 
-            var conf = new AutoModuleConfiguration(ScanComponents(assemblyFilters));
 
-            
+            var configurer = new ComponentRegisterer(container.Configuration);
+            configurer.RegisterComponents(ScanComponents(assemblyFilters));
 
-            var ctx = RegisterContext(DefaultContext, conf);
             ctx.RegisterInstance<IEnvironmentService>(_environmentService);
         }
 
@@ -116,10 +119,9 @@ namespace Archimedes.Framework.Context
         /// Register a named DI context.
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="configuration"></param>
-        public ElderBox RegisterContext(string name, ElderModuleConfiguration configuration)
+        /// <param name="diContext"></param>
+        public ElderBox RegisterContext(string name, ElderBox diContext)
         {
-            var diContext = new ElderBox(configuration);
             _contextRegistry.Add(name, diContext);
             return diContext;
         }
