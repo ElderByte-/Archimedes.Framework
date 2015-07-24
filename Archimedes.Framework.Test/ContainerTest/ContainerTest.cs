@@ -16,7 +16,8 @@ namespace Archimedes.Framework.Test.ContainerTest
         [TestCase]
         public void TestComponentScan()
         {
-            var components = ApplicationContext.Instance.ScanComponents("Archimedes.*").ToList();
+            var componentScanner = ComponentUtil.BuildComponentScanner();
+            var components = componentScanner.ScanByAttribute("Archimedes.*").ToList();
 
             Assert.True(components.Contains(typeof (ServiceA)), "");
             Assert.True(components.Contains(typeof (ServiceB)), "");
@@ -28,17 +29,18 @@ namespace Archimedes.Framework.Test.ContainerTest
         [TestCase]
         public void TestAutoConfiguration()
         {
-            var components = ApplicationContext.Instance.ScanComponents("Archimedes.*").ToList();
-            var conf = new ComponentRegisterer(components);
+            var componentScanner = ComponentUtil.BuildComponentScanner();
+            var components = componentScanner.ScanByAttribute("Archimedes.*").ToList();
+
+            var conf = new ComponentRegisterer(new ElderModuleConfiguration());
+            conf.RegisterComponents(components);
         }
 
 
         [TestCase]
         public void TestSimpleConstructorWiring()
         {
-
             var context = new ElderBox(GetConfiguration());
-
             var instance = context.Resolve<ServiceC>();
         }
 
@@ -81,9 +83,9 @@ namespace Archimedes.Framework.Test.ContainerTest
             var imp = context.Resolve<ServiceX>();
         }
 
-        private ComponentRegisterer GetConfiguration()
+        private IModuleConfiguration GetConfiguration()
         {
-            return new ComponentRegisterer(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
+            return ModuleConfigurationBuilder.BuildAutoConfiguration("Archimedes.*");
         }
 
     }

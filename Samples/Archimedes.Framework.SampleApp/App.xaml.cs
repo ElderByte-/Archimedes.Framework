@@ -2,6 +2,7 @@
 using System.Windows.Markup.Primitives;
 using Archimedes.Framework.Context;
 using Archimedes.Framework.ContextEnvironment.Properties;
+using Archimedes.Framework.SampleApp.Util;
 using Archimedes.Framework.SampleApp.ViewModels;
 using Archimedes.Framework.Stereotype;
 
@@ -17,6 +18,10 @@ namespace Archimedes.Framework.SampleApp
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            // Setup logging
+            new LoggerConfiguration(AppUtil.ApplicaitonBinaryFolder, "Debug");
+
+
             var ctx = ApplicationContext.Instance;
 
             // If necessary, you can add command-line support for the configuration properties
@@ -29,6 +34,7 @@ namespace Archimedes.Framework.SampleApp
 
             // We need to pull in the root components with a manual call to autowire:
             ApplicationContext.Instance.Container.Autowire(this);
+            // The _mainViewModel field has now been injected.
 
 
             var main = new MainWindow();

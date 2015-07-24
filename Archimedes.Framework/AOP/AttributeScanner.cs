@@ -43,7 +43,15 @@ namespace Archimedes.Framework.AOP
         {
             var foundTypes = new HashSet<Type>();
 
-            Log.Info("Assembly Attribute-Scanning restricted to: " + string.Join(", ", regexAssemblyFilters));
+            if (regexAssemblyFilters == null || regexAssemblyFilters.Length == 0)
+            {
+                Log.Warn("Assembly Attribute-Scanning is NOT restrictend and all Assemblies will therefore be scanned. For performance reasons, you should limit the scan to your libraries.");
+            }
+            else
+            {
+                Log.Info("Assembly Attribute-Scanning restricted to: " + string.Join(", ", regexAssemblyFilters));
+            }
+
 
             EnsureAssembliesAreLoadedForComponentScan();
 
@@ -70,7 +78,7 @@ namespace Archimedes.Framework.AOP
                     ignoredAssemblies.Add(assembly.GetName().Name);
                 }
             }
-            // Log ingnored
+
             Log.Debug(string.Format("Ignored assemblies: {0}", Environment.NewLine + string.Join(Environment.NewLine, ignoredAssemblies)));
 
             return foundTypes;

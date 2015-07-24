@@ -131,11 +131,12 @@ namespace Archimedes.Framework.Context
         /// </summary>
         /// <param name="assemblyFilters">Regexes which allow an assembly if matched.</param>
         /// <returns></returns>
-        public IEnumerable<Type> ScanComponents(params string[] assemblyFilters)
+        private IEnumerable<Type> ScanComponents(params string[] assemblyFilters)
         {
             if (_components == null)
             {
                 var componentScanner = ComponentUtil.BuildComponentScanner();
+                Log.Info("Scanning for [Component] / [Service] / etc. classes...");
                 _components = componentScanner.ScanByAttribute(assemblyFilters).ToList();
             }
             return _components;

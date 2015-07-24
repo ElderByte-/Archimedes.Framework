@@ -54,15 +54,8 @@ namespace Archimedes.Framework.Context.Configuration
 
             var configurationTypes = FindAllConfigurationTypes();
 
-
             var registerer = new ComponentRegisterer(_ctx.Container.Configuration);
             registerer.RegisterComponents(configurationTypes);
-
-
-            foreach (var configurationType in configurationTypes)
-            {
-
-            }
         }
 
         #endregion
@@ -90,6 +83,7 @@ namespace Archimedes.Framework.Context.Configuration
                 assemblyFilter = assembly.GetName().Name;
             }
 
+            Log.Info("Scanning for [Configuration] classes.");
             var configurationTypes = configurationScanner.ScanByAttribute(assemblyFilter);
 
             // Use component-scan filters to recursilvy scan for more configuration types in the assembly.

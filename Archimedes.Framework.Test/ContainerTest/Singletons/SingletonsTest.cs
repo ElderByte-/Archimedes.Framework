@@ -42,9 +42,10 @@ namespace Archimedes.Framework.Test.ContainerTest.Singletons
         }*/
 
 
-        private ComponentRegisterer GetConfiguration()
+        private IModuleConfiguration GetConfiguration()
         {
-            return new ComponentRegisterer(ApplicationContext.Instance.ScanComponents("Archimedes.*"));
+            return ModuleConfigurationBuilder.BuildAutoConfiguration("Archimedes.*");
         }
+
     }
 }

@@ -78,6 +78,7 @@
     <Compile Include="DI\Factories\TypeComponentFactory.cs" />
     <Compile Include="DI\Factories\FactoryMethodComponentFactory.cs" />
     <Compile Include="DI\Factories\IComponentFactory.cs" />
+    <Compile Include="DI\ModuleConfigurationBuilder.cs" />
     <Compile Include="DI\ValueConfigurationException.cs" />
     <Compile Include="DI\AmbiguousMappingException.cs" />
     <Compile Include="DI\AutowireException.cs" />
