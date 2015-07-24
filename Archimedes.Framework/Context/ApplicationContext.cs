@@ -78,25 +78,22 @@ namespace Archimedes.Framework.Context
         {
             try
             {
-                Environment.Refresh();
-
                 var container = new ElderBox();
                 var ctx = RegisterContext(DefaultContext, container);
 
+                var configuration = Environment.Configuration;
 
                 var configurationLoader = new ConfigurationLoader(this);
                 configurationLoader.Load();
 
-                var configuration = Environment.Configuration;
-
                 var assemblyFiltersStr = configuration.GetOptional(ArchimedesPropertyKeys.ComponentScanAssemblies);
                 var assemblyFilters = assemblyFiltersStr.MapOptional(x => x.Split(',')).OrElse(new string[0]);
-
 
                 var configurer = new ComponentRegisterer(container.Configuration);
                 configurer.RegisterComponents(ScanComponents(assemblyFilters));
 
                 ctx.RegisterInstance<IEnvironmentService>(_environmentService);
+                ctx.RegisterInstance<ApplicationContext>(this);
             }
             catch (Exception e)
             {

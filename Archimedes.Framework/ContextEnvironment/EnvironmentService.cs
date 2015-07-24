@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using Archimedes.Framework.ContextEnvironment.Properties;
 using Archimedes.Patterns.Utils;
 using log4net;
-using log4net.Config;
 
 namespace Archimedes.Framework.ContextEnvironment
 {
@@ -19,10 +17,11 @@ namespace Archimedes.Framework.ContextEnvironment
 
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-
         private const string PropertiesFileName = "application.properties";
-        private readonly PropertyStore _configuration = new PropertyStore();
         private readonly List<IPropertySource> _propertySources = new List<IPropertySource>();
+
+        private PropertyStore _configuration;
+
 
         #endregion
 
@@ -46,11 +45,19 @@ namespace Archimedes.Framework.ContextEnvironment
         #region Public Properties
 
         /// <summary>
-        /// Gets the configuration properties
+        /// Gets the configuration properties.
         /// </summary>
         public PropertyStore Configuration
         {
-            get { return _configuration; }
+            get
+            {
+                if (_configuration == null)
+                {
+                    _configuration = new PropertyStore(); 
+                    Refresh();
+                }
+                return _configuration;
+            }
         }
 
         /// <summary>
@@ -70,10 +77,9 @@ namespace Archimedes.Framework.ContextEnvironment
         #region Public methods
 
         /// <summary>
-        /// Loads all properties
+        /// Updates all properties using all currently registered PropertySources
         /// </summary>
         /// <exception cref="PropertySourceException"></exception>
-         [DebuggerStepThrough]
         public void Refresh()
         {
             Log.Info(string.Format("Refreshing environment configuration properties using {0} property sources!", PropertySources.Count));

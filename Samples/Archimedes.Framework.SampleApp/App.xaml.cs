@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Markup.Primitives;
 using Archimedes.Framework.Context;
 using Archimedes.Framework.ContextEnvironment.Properties;
 using Archimedes.Framework.SampleApp.Util;
