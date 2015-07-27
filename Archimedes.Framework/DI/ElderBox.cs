@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Archimedes.Framework.Context;
 using Archimedes.Framework.ContextEnvironment;
 using Archimedes.Framework.DI.Attribute;
 using Archimedes.Framework.DI.Factories;
 using Archimedes.Framework.Stereotype;
+using Archimedes.Framework.Util;
 using log4net;
 
 namespace Archimedes.Framework.DI
@@ -247,7 +249,6 @@ namespace Archimedes.Framework.DI
 
 
 
-        [DebuggerStepThrough]
         private object ResolveInstanceFor(Type type, HashSet<Type> unresolvedDependencies)
         {
             if(type == null) throw new ArgumentNullException("type");
@@ -268,15 +269,15 @@ namespace Archimedes.Framework.DI
             {
                 instance = factory.CreateInstance(this, unresolvedDependencies);
 
-                var typeForImplementation = instance.GetType();
+                var implementationTargetInterfaces = FetchImplementationTargets(instance.GetType());
 
-                // Successfully resolved the instance:
-                UpdateSingletonInstance(typeForImplementation, instance);
-                UpdateSingletonInstance(type, instance);
-
-                // Update the unresolved dependencies
-                unresolvedDependencies.Remove(typeForImplementation);
-                unresolvedDependencies.Remove(type);
+                foreach (var implementationTarget in implementationTargetInterfaces)
+                {
+                    // TODO Here we probably overwrite existing implementations, which would be a hidden conflict.
+                    // Maybe enhance the handling and allow multiple impl. but throw error when one of these is resolved..
+                    UpdateSingletonInstance(implementationTarget, instance);
+                    unresolvedDependencies.Remove(implementationTarget);
+                }
             }
             else
             {
@@ -284,6 +285,21 @@ namespace Archimedes.Framework.DI
             }
 
             return instance;
+        }
+
+        private IEnumerable<Type> FetchImplementationTargets(Type implementation)
+        {
+            var targets = new List<Type>();
+
+            var customBaseTypes = ReflectionUtil.FindCustomBaseTypes(implementation);
+
+            targets.AddRange(customBaseTypes);
+
+            var customInterfaces = ReflectionUtil.FindCustomInterfaces(implementation);
+
+            targets.AddRange(customInterfaces);
+
+            return targets;
         }
 
 
@@ -295,7 +311,6 @@ namespace Archimedes.Framework.DI
         /// <param name="unresolvedDependencies"></param>
         /// <param name="providedParameters"></param>
         /// <returns></returns>
-        [DebuggerStepThrough]
         internal object[] AutowireParameters(object contextInfo, ParameterInfo[] parameterInfos, HashSet<Type> unresolvedDependencies, object[] providedParameters)
         {
             if (parameterInfos == null) throw new ArgumentNullException("parameterInfos");
@@ -321,7 +336,6 @@ namespace Archimedes.Framework.DI
         /// <param name="parameterInfo"></param>
         /// <param name="unresolvedDependencies"></param>
         /// <returns></returns>
-        [DebuggerStepThrough]
         private object ResolveParameterInstance(object contextInfo, ParameterInfo parameterInfo, HashSet<Type> unresolvedDependencies)
         {
             object parameter;

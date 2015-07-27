@@ -98,6 +98,7 @@
     <Compile Include="Stereotype\InjectAttribute.cs" />
     <Compile Include="Stereotype\PrimaryAttribute.cs" />
     <Compile Include="Stereotype\ServiceAttribute.cs" />
+    <Compile Include="Util\ReflectionUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Archimedes.snk" />

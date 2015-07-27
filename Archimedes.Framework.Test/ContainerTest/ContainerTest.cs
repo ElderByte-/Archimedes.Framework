@@ -58,6 +58,28 @@ namespace Archimedes.Framework.Test.ContainerTest
             Assert.IsNotNull(_serviceB, "Failed to autowire instance!");
         }
 
+
+        [TestCase]
+        public void TestInterfaceConstructorWiringServiceY()
+        {
+            var context = new ElderBox(GetConfiguration());
+            var instance = context.Resolve<ServiceY>();
+        }
+
+        [TestCase]
+        public void TestInterfaceConstructorWiringServiceB()
+        {
+            var context = new ElderBox(GetConfiguration());
+            var instance = context.Resolve<ServiceB>();
+        }
+
+        [TestCase]
+        public void TestInterfaceConstructorWiringSimple()
+        {
+            var context = new ElderBox(GetConfiguration());
+            var instance = context.Resolve<ServiceDSimple>();
+        }
+
         [TestCase]
         public void TestInterfaceConstructorWiring()
         {

@@ -8,7 +8,6 @@ namespace Archimedes.Framework.Test.ContainerTest
     public class ServiceD
     {
         [Inject]
-        [DebuggerStepThrough]
         public ServiceD(ServiceA serviceA, IServiceB serviceB, ServiceY serviceY)
         {
             if(serviceA == null) throw new ArgumentNullException("serviceA");

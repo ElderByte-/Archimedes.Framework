@@ -85,11 +85,16 @@
     <Compile Include="ContainerTest\ServiceB.cs" />
     <Compile Include="ContainerTest\ServiceC.cs" />
     <Compile Include="ContainerTest\ServiceD.cs" />
+    <Compile Include="ContainerTest\ServiceDSimple.cs" />
     <Compile Include="ContainerTest\ServiceX.cs" />
     <Compile Include="ContainerTest\ServiceY.cs" />
-    <Compile Include="ContainerTest\Singletons\ServiceSingletonA.cs" />
-    <Compile Include="ContainerTest\Singletons\ServiceSingletonB.cs" />
-    <Compile Include="ContainerTest\Singletons\SingletonsTest.cs" />
+    <Compile Include="ContainerTest\Singletons\Abstract\ServiceAbstractSingletonA.cs" />
+    <Compile Include="ContainerTest\Singletons\Abstract\ServiceAbstractSingletonB.cs" />
+    <Compile Include="ContainerTest\Singletons\Abstract\AbstractSingletonsTest.cs" />
+    <Compile Include="ContainerTest\Singletons\Abstract\ServiceAbstractSingletonImplementation.cs" />
+    <Compile Include="ContainerTest\Singletons\Simple\ServiceSingletonA.cs" />
+    <Compile Include="ContainerTest\Singletons\Simple\ServiceSingletonB.cs" />
+    <Compile Include="ContainerTest\Singletons\Simple\SingletonsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

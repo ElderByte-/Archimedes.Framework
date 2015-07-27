@@ -4,6 +4,7 @@ using System.Reflection;
 using Archimedes.Framework.Context.Annotation;
 using Archimedes.Framework.DI.Factories;
 using Archimedes.Framework.Stereotype;
+using Archimedes.Framework.Util;
 
 namespace Archimedes.Framework.DI
 {
@@ -63,19 +64,21 @@ namespace Archimedes.Framework.DI
 
         private void RegisterInheritanceImpl(Type componentType)
         {
-            Type t = componentType;
-            while (t != null && !(t == typeof(Object)))
+            var baseTypes = ReflectionUtil.FindCustomBaseTypes(componentType);
+
+            foreach (var baseType in baseTypes)
             {
-                _configuration.RegisterSingleton(t, componentType);
-                t = t.BaseType;
-            } 
+                _configuration.RegisterSingleton(baseType, componentType);
+            }
         }
 
         private void RegisterInterfaceImpl(Type componentType)
         {
-            foreach (var @interface in componentType.GetInterfaces())
+            var baseTypes = ReflectionUtil.FindCustomInterfaces(componentType);
+
+            foreach (var baseType in baseTypes)
             {
-                _configuration.RegisterSingleton(@interface, componentType);
+                _configuration.RegisterSingleton(baseType, componentType);
             }
         }
 
