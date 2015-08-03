@@ -115,7 +115,7 @@ namespace Archimedes.Framework.ContextEnvironment
         {
             if (!string.IsNullOrEmpty(hidden))
             {
-                byte[] decodedBytes = Convert.FromBase64String(hidden);
+                byte[] decodedBytes = Convert.FromBase64String(hidden); // Handle exceptions
                 string decodedText = Encoding.UTF8.GetString(decodedBytes);
                 return decodedText;
             }

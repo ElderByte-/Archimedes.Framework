@@ -87,7 +87,7 @@ namespace Archimedes.Framework.Context
                 configurationLoader.Load();
 
                 var assemblyFiltersStr = configuration.GetOptional(ArchimedesPropertyKeys.ComponentScanAssemblies);
-                var assemblyFilters = assemblyFiltersStr.MapOptional(x => x.Split(',')).OrElse(new string[0]);
+                var assemblyFilters = assemblyFiltersStr.Map(x => x.Split(',')).OrElse(new string[0]);
 
                 var configurer = new ComponentRegisterer(container.Configuration);
                 configurer.RegisterComponents(ScanComponents(assemblyFilters));

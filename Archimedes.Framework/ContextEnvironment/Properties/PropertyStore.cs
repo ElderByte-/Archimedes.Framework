@@ -65,9 +65,9 @@ namespace Archimedes.Framework.ContextEnvironment.Properties
         {
             if (_parameters.ContainsKey(parameter.ToLower()))
             {
-                return Optional<string>.OfNullable(_parameters[parameter.ToLower()]);
+                return Optional.OfNullable(_parameters[parameter.ToLower()]);
             }
-            return Optional<string>.Empty();
+            return Optional.Empty<string>();
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Archimedes.Framework.ContextEnvironment.Properties
                 var opt = GetOptional(param);
                 if (opt.IsPresent) return opt; // return the first present parameter value
             }
-            return Optional<string>.Empty();
+            return Optional.Empty<string>();
         }
 
 
