@@ -36,8 +36,8 @@
     <AssemblyOriginatorKeyFile>Archimedes.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Archimedes.Patterns, Version=1.0.9.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
-      <HintPath>..\packages\archimedes.patterns.1.0.9.0\lib\net40\Archimedes.Patterns.dll</HintPath>
+    <Reference Include="Archimedes.Patterns, Version=1.0.10.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
+      <HintPath>..\packages\archimedes.patterns.1.0.10.0\lib\net40\Archimedes.Patterns.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net">
