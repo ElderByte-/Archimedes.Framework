@@ -6,7 +6,7 @@ namespace Archimedes.Framework.Test.ConfigurationTest
 {
     class ConfigurationServiceTest
     {
-        [TestCase()]
+        [TestCase]
         public void TestLoadHidden()
         {
             var configurationService = new EnvironmentService();

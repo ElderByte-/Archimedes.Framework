@@ -87,15 +87,14 @@ namespace Archimedes.Framework.ContextEnvironment.Properties
 
 
         /// <summary>
-        /// A short hand to check if a parameter is set to "true"
+        /// A short hand to check if a parameter is set to "true".
+        /// If the parameter is false, or not set at all, returns false.
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
         public bool IsTrue(string parameter)
         {
-            var val = Get(parameter);
-
-            return (val != null && true.ToString().ToLower().Equals(val.ToLower()));
+            return GetOptional(parameter).Map(value => true.ToString().ToLower().Equals(value.ToLower())).OrElse(false);
         }
 
 

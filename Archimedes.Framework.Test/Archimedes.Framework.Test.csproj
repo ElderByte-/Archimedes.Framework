@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Archimedes.Patterns, Version=1.0.12.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Archimedes.Patterns.1.0.12.0\lib\net40\Archimedes.Patterns.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -52,6 +56,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ConfigurationTest\CommandLinePropertySourceTest.cs" />
     <Compile Include="ConfigurationTest\ConfigurationServiceTest.cs" />
     <Compile Include="ConfigurationTest\PropertiesParserTest.cs" />
     <Compile Include="ConfigurationTest\ServiceConfigTarget.cs" />
@@ -92,6 +97,7 @@
     <Compile Include="ContainerTest\Singletons\Simple\ServiceSingletonA.cs" />
     <Compile Include="ContainerTest\Singletons\Simple\ServiceSingletonB.cs" />
     <Compile Include="ContainerTest\Singletons\Simple\SingletonsTest.cs" />
+    <Compile Include="Localisation\FilePropertiesMessageSourceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

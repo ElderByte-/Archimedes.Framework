@@ -15,12 +15,11 @@ namespace Archimedes.Framework.ContextEnvironment.Properties
         {
             var cmdProps = new PropertyStore();
 
-            if (_commandLineArgs != null && _commandLineArgs.Length != 0)
+            if (_commandLineArgs != null && _commandLineArgs.Length > 0)
             {
                 var argsCmd = CommandLineParser.ParseCommandLineArgs(_commandLineArgs);
                 cmdProps.Merge(argsCmd.ToParameterMap());
             }
-
             return cmdProps;
         }
     }

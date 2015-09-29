@@ -1,0 +1,112 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+
+namespace Archimedes.Framework.Localisation
+{
+    /// <summary>
+    /// Simple index for culture-key mapped string values.
+    /// </summary>
+    class TranslationCache
+    {
+        private readonly IDictionary<CultureInfo, IDictionary<string, string>> _cultureIndex = new Dictionary<CultureInfo, IDictionary<string, string>>();
+
+        /// <summary>
+        /// Update the text value of the given text-key and culture
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void Update(CultureInfo culture, string key, string value)
+        {
+            if (!_cultureIndex.ContainsKey(culture))
+            {
+                _cultureIndex.Add(culture, new Dictionary<string, string>());
+            }
+            if (_cultureIndex[culture].ContainsKey(key))
+            {
+                _cultureIndex[culture][key] = value;
+            }
+            else
+            {
+                _cultureIndex[culture].Add(key, value);
+            }
+        }
+
+        /// <summary>
+        /// Update the text value of the given text-key and culture
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <param name="messages"></param>
+        public void Update(CultureInfo culture, IDictionary<string, string> messages)
+        {
+            if (!_cultureIndex.ContainsKey(culture))
+            {
+                _cultureIndex.Add(culture, new Dictionary<string, string>());
+            }
+
+            foreach (var kv in messages)
+            {
+                if (_cultureIndex[culture].ContainsKey(kv.Key))
+                {
+                    _cultureIndex[culture][kv.Key] = kv.Value;
+                }
+                else
+                {
+                    _cultureIndex[culture].Add(kv.Key, kv.Value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clear the cache of the given culture
+        /// </summary>
+        /// <param name="culture"></param>
+        public void Clear(CultureInfo culture)
+        {
+            if (_cultureIndex.ContainsKey(culture))
+            {
+                _cultureIndex.Remove(culture);
+            }
+        }
+
+        /// <summary>
+        /// Clear the whole cache
+        /// </summary>
+        public void Clear()
+        {
+            _cultureIndex.Clear();
+        }
+
+        /// <summary>
+        /// Returns the value of the given text-key in the given culture if available.
+        /// If not found, returns NULL
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public string Find(CultureInfo culture, string key)
+        {
+            if (_cultureIndex.ContainsKey(culture))
+            {
+                if (_cultureIndex[culture].ContainsKey(key))
+                {
+                    return _cultureIndex[culture][key];
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Does the given culture exist in this cache? 
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        public bool Exists(CultureInfo culture)
+        {
+            return _cultureIndex.ContainsKey(culture);
+        }
+    }
+}
