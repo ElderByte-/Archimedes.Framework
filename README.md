@@ -20,3 +20,6 @@ public class MyCoolService
 ```
 
 Much of the API design is inspired if not 1:1 taken from the great Spring Framework.
+
+# How to use / Documentation
+Documentation is currently lacking. However, you can have a look at [the sample WPF App](https://github.com/ElderByte-/Archimedes.Framework/tree/master/Samples/Archimedes.Framework.SampleApp) which shows the usage of the framework.
