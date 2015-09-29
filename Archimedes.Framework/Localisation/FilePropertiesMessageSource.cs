@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Archimedes.Framework.ContextEnvironment.Properties;
+using log4net;
 
 namespace Archimedes.Framework.Localisation
 {
     public class FilePropertiesMessageSource : IMessageSource
     {
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly DirectoryInfo _messagesFolder;
 
         public FilePropertiesMessageSource(string messagesFolder)
@@ -32,6 +36,8 @@ namespace Archimedes.Framework.Localisation
         public PropertyStore Load(CultureInfo culture)
         {
             var allmessages = new PropertyStore();
+
+            Log.Info(string.Format("Loading culture {0} -> Scanning for localized messages in folder '{1}'...", culture, _messagesFolder.FullName));
 
             if (_messagesFolder.Exists)
             {

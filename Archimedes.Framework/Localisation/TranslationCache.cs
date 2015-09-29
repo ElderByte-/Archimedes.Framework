@@ -11,7 +11,7 @@ namespace Archimedes.Framework.Localisation
     /// </summary>
     class TranslationCache
     {
-        private readonly IDictionary<CultureInfo, IDictionary<string, string>> _cultureIndex = new Dictionary<CultureInfo, IDictionary<string, string>>();
+        private readonly IDictionary<string, IDictionary<string, string>> _cultureIndex = new Dictionary<string, IDictionary<string, string>>();
 
         /// <summary>
         /// Update the text value of the given text-key and culture
@@ -21,17 +21,19 @@ namespace Archimedes.Framework.Localisation
         /// <param name="value"></param>
         public void Update(CultureInfo culture, string key, string value)
         {
-            if (!_cultureIndex.ContainsKey(culture))
+            var mculture = CultureToKey(culture);
+
+            if (!_cultureIndex.ContainsKey(mculture))
             {
-                _cultureIndex.Add(culture, new Dictionary<string, string>());
+                _cultureIndex.Add(mculture, new Dictionary<string, string>());
             }
-            if (_cultureIndex[culture].ContainsKey(key))
+            if (_cultureIndex[mculture].ContainsKey(key))
             {
-                _cultureIndex[culture][key] = value;
+                _cultureIndex[mculture][key] = value;
             }
             else
             {
-                _cultureIndex[culture].Add(key, value);
+                _cultureIndex[mculture].Add(key, value);
             }
         }
 
@@ -42,20 +44,22 @@ namespace Archimedes.Framework.Localisation
         /// <param name="messages"></param>
         public void Update(CultureInfo culture, IDictionary<string, string> messages)
         {
-            if (!_cultureIndex.ContainsKey(culture))
+            var mculture = CultureToKey(culture);
+
+            if (!_cultureIndex.ContainsKey(mculture))
             {
-                _cultureIndex.Add(culture, new Dictionary<string, string>());
+                _cultureIndex.Add(mculture, new Dictionary<string, string>());
             }
 
             foreach (var kv in messages)
             {
-                if (_cultureIndex[culture].ContainsKey(kv.Key))
+                if (_cultureIndex[mculture].ContainsKey(kv.Key))
                 {
-                    _cultureIndex[culture][kv.Key] = kv.Value;
+                    _cultureIndex[mculture][kv.Key] = kv.Value;
                 }
                 else
                 {
-                    _cultureIndex[culture].Add(kv.Key, kv.Value);
+                    _cultureIndex[mculture].Add(kv.Key, kv.Value);
                 }
             }
         }
@@ -66,9 +70,11 @@ namespace Archimedes.Framework.Localisation
         /// <param name="culture"></param>
         public void Clear(CultureInfo culture)
         {
-            if (_cultureIndex.ContainsKey(culture))
+            var mculture = CultureToKey(culture);
+
+            if (_cultureIndex.ContainsKey(mculture))
             {
-                _cultureIndex.Remove(culture);
+                _cultureIndex.Remove(mculture);
             }
         }
 
@@ -89,11 +95,12 @@ namespace Archimedes.Framework.Localisation
         /// <returns></returns>
         public string Find(CultureInfo culture, string key)
         {
-            if (_cultureIndex.ContainsKey(culture))
+            var mculture = CultureToKey(culture);
+            if (_cultureIndex.ContainsKey(mculture))
             {
-                if (_cultureIndex[culture].ContainsKey(key))
+                if (_cultureIndex[mculture].ContainsKey(key))
                 {
-                    return _cultureIndex[culture][key];
+                    return _cultureIndex[mculture][key];
                 }
             }
             return null;
@@ -106,7 +113,13 @@ namespace Archimedes.Framework.Localisation
         /// <returns></returns>
         public bool Exists(CultureInfo culture)
         {
-            return _cultureIndex.ContainsKey(culture);
+            return _cultureIndex.ContainsKey(CultureToKey(culture));
+        }
+
+        private string CultureToKey(CultureInfo culture)
+        {
+            if (culture == null) return "default";
+            return culture.Name.ToLower();
         }
     }
 }
