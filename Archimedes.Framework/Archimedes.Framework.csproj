@@ -95,10 +95,12 @@
     <Compile Include="DI\IModuleConfiguration.cs" />
     <Compile Include="DI\ImplementationRegistry.cs" />
     <Compile Include="DI\ValueConfigurator.cs" />
+    <Compile Include="Localisation\CultureInfoUtil.cs" />
     <Compile Include="Localisation\ILocalisationService.cs" />
-    <Compile Include="Localisation\IMessageSource.cs" />
+    <Compile Include="Localisation\MessageSources\IMessageSource.cs" />
     <Compile Include="Localisation\LocalisationService.cs" />
-    <Compile Include="Localisation\FilePropertiesMessageSource.cs" />
+    <Compile Include="Localisation\MessageSources\FilePropertiesMessageSource.cs" />
+    <Compile Include="Localisation\MessageSources\MemoryMessageSource.cs" />
     <Compile Include="Localisation\TranslationCache.cs" />
     <Compile Include="Localisation\WPF\LocalisationExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

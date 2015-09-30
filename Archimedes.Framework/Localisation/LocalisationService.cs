@@ -23,6 +23,7 @@ namespace Archimedes.Framework.Localisation
 
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        readonly IDictionary<CultureInfo, bool> _hirarchyLoadedFlags = new Dictionary<CultureInfo, bool>();
         private readonly TranslationCache _cache = new TranslationCache();
         private readonly List<IMessageSource> _messageSources = new List<IMessageSource>();
 
@@ -31,9 +32,14 @@ namespace Archimedes.Framework.Localisation
 
         #endregion
 
-        public LocalisationService()
+        public LocalisationService() :
+            this(new FilePropertiesMessageSource(AppUtil.ApplicaitonBinaryFolder + @"\Resources\messages"))
         {
-            MessageSources.Add(new FilePropertiesMessageSource(AppUtil.ApplicaitonBinaryFolder + @"\Resources\messages"));
+        }
+
+        public LocalisationService(IMessageSource messageSource)
+        {
+            MessageSources.Add(messageSource);
 
             if (!string.IsNullOrEmpty(_defaultCulture))
             {
@@ -45,6 +51,7 @@ namespace Archimedes.Framework.Localisation
                 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
             }
         }
+
 
         #region Public API
 
@@ -77,8 +84,7 @@ namespace Archimedes.Framework.Localisation
 
         public string GetTranslation(CultureInfo culture, string key)
         {
-            EnsureCultureLoaded(null);  // Default Culture => null, which is usually english
-            EnsureCultureLoaded(culture);
+            EnsureCultureHirarchyLoaded(culture);
 
             var translation = _cache.Find(culture, key);
 
@@ -87,20 +93,20 @@ namespace Archimedes.Framework.Localisation
                 return translation;
             }
 
-            // Could not find the requested translation, try default fallback
-            translation = _cache.Find(null, key);
-
-            if (translation != null)
+            if (!CultureInfo.InvariantCulture.Equals(culture))
             {
-                Log.Debug(string.Format("Could not find translation for [{0}] in Culture {1}, returning default translation.", key, culture));
-                return translation;
+                Log.Debug(string.Format("Could not find translation for [{0}] in Culture {1}. Falling back to culture {2}!", key, culture, culture.Parent));
+                // We go up the culture hirarchy until we find a translation
+                return GetTranslation(culture.Parent, key);
             }
+
             Log.Warn(string.Format("Could not find any translation for key '{0}'!", key));
             return string.Format("[{0}]", key);
         }
 
         public void Reload()
         {
+            _hirarchyLoadedFlags.Clear();
             _cache.Clear();
         }
 
@@ -115,6 +121,63 @@ namespace Archimedes.Framework.Localisation
         #endregion
 
         #region Private methods
+
+        /// <summary>
+        /// Returns all available cultures from all currently registered message sources
+        /// </summary>
+        /// <returns></returns>
+        private ISet<CultureInfo> GetAllAvailableCultures()
+        {
+            var availableCultures = new HashSet<CultureInfo>();
+            foreach (var messageSource in _messageSources)
+            {
+                foreach (var mCulture in messageSource.GetAvailableCultures())
+                {
+                    availableCultures.Add(mCulture);
+                }
+            }
+            return availableCultures;
+        } 
+
+
+
+        /// <summary>
+        /// Ensures that the whole hirarchy of the given culture is loaded,
+        /// up to the Invariant culture.
+        /// 
+        /// For example if you want to ensure en-US is loaded, it will ensure that...
+        /// 
+        /// -> en-US
+        /// -> en
+        /// -> Invariant
+        /// 
+        /// ... are all loaded.
+        /// </summary>
+        /// <param name="culture"></param>
+        private void EnsureCultureHirarchyLoaded(CultureInfo culture)
+        {
+            if (!_hirarchyLoadedFlags.ContainsKey(culture) || _hirarchyLoadedFlags[culture])
+            {
+                var availables = GetAllAvailableCultures();
+
+                var hirarchy = CultureInfoUtil.FindAllSimilarCultures(availables, culture);
+                hirarchy.Add(CultureInfo.InvariantCulture);
+
+                foreach (var hcult in hirarchy)
+                {
+                    EnsureCultureLoaded(hcult);
+                }
+
+                if (!_hirarchyLoadedFlags.ContainsKey(culture))
+                {
+                    _hirarchyLoadedFlags.Add(culture, true);
+                }
+                else
+                {
+                    _hirarchyLoadedFlags[culture] = true;
+                }
+            }
+        }
 
         private void EnsureCultureLoaded(CultureInfo culture)
         {
@@ -137,8 +200,16 @@ namespace Archimedes.Framework.Localisation
             var ps = new PropertyStore();
             foreach (var messageSource in _messageSources)
             {
-                var messages = messageSource.Load(culture);
-                ps.Merge(messages);
+                try
+                {
+                    var messages = messageSource.Load(culture);
+                    ps.Merge(messages);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Failed to load message-source!", e);
+                }
+
             }
             return ps;
         }

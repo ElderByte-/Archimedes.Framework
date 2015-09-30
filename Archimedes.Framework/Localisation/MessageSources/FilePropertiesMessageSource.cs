@@ -39,26 +39,55 @@ namespace Archimedes.Framework.Localisation
 
             Log.Info(string.Format("Loading culture {0} -> Scanning for localized messages in folder '{1}'...", culture, _messagesFolder.FullName));
 
+            foreach (var file in GetAvailablePropertiesFiles())
+            {
+                if (IsMatch(culture, file.Name))
+                {
+                    var propertiesSource = new FilePropertiesPropertySource(file.FullName);
+                    allmessages.Merge(propertiesSource.Load());
+                }
+            }
+            
+            return allmessages;
+        }
+
+
+        private IEnumerable<FileInfo> GetAvailablePropertiesFiles()
+        {
             if (_messagesFolder.Exists)
             {
                 foreach (var file in _messagesFolder.GetFiles())
                 {
                     if (file.Extension == ".properties")
                     {
-                        if (IsMatch(culture, file.Name))
-                        {
-                            var propertiesSource = new FilePropertiesPropertySource(file.FullName);
-                            allmessages.Merge(propertiesSource.Load());
-                        }
+                        yield return file;
                     }
                 }
             }
-            return allmessages;
+        } 
+
+        public ISet<CultureInfo> GetAvailableCultures()
+        {
+            var availables = new HashSet<CultureInfo>();
+
+            foreach (var file in GetAvailablePropertiesFiles())
+            {
+                availables.Add(CultureInfoByName(file.Name));
+            }
+
+            return availables;
         }
 
         public static bool IsMatch(CultureInfo culture, string fileName)
         {
+            var fileCulture = CultureInfoByName(fileName);
+            return culture.Equals(fileCulture);
+        }
+
+        private static CultureInfo CultureInfoByName(string fileName)
+        {
             fileName = Path.GetFileNameWithoutExtension(fileName);
+
             var parts = fileName.Split('_');
 
             string isoCode = null;
@@ -67,32 +96,16 @@ namespace Archimedes.Framework.Localisation
             if (parts.Length == 2)
             {
                 isoCode = parts[1];
-            }else if (parts.Length > 2)
+            }
+            else if (parts.Length > 2)
             {
                 isoCode = parts[1];
                 cultureCode = parts[2];
             }
 
-            if (culture == null)
-            {
-                return isoCode == null;
-            }
-
-            if (isoCode != null)
-            {
-                var expectedParts = culture.Name.Split('-');
-                var expectedIsoCode = expectedParts[0];
-                var expectedCulture = expectedParts.Length > 1 ? expectedParts[1] : null;
-
-                if (string.Equals(isoCode, expectedIsoCode, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    if (cultureCode == null) return true;
-
-                    return expectedCulture == null || string.Equals(cultureCode, expectedCulture, StringComparison.CurrentCultureIgnoreCase);
-                }
-            }
-
-            return false;
+            if (isoCode == null) return CultureInfo.InvariantCulture;
+            if (cultureCode == null) return CultureInfo.GetCultureInfo(isoCode);
+            return CultureInfo.GetCultureInfo(isoCode + "-" + cultureCode.ToUpper());
         }
 
 

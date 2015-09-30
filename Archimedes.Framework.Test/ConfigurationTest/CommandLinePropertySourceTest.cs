@@ -24,8 +24,6 @@ namespace Archimedes.Framework.Test.ConfigurationTest
 
             Assert.AreEqual(false, store.IsTrue("i.do.not.exist.at.all"));
             Assert.AreEqual(false, store.GetOptional("i.do.not.exist.at.all").IsPresent);
-
-
         }
 
 
