@@ -22,7 +22,7 @@ namespace Archimedes.Framework.Localisation
         public void Update(CultureInfo culture, string key, string value)
         {
             if(culture == null) throw new ArgumentNullException("culture");
-
+            key = key.ToLower();
 
             if (!_cultureIndex.ContainsKey(culture))
             {
@@ -54,13 +54,15 @@ namespace Archimedes.Framework.Localisation
 
             foreach (var kv in messages)
             {
-                if (_cultureIndex[culture].ContainsKey(kv.Key))
+                var key = kv.Key.ToLower();
+
+                if (_cultureIndex[culture].ContainsKey(key))
                 {
-                    _cultureIndex[culture][kv.Key] = kv.Value;
+                    _cultureIndex[culture][key] = kv.Value;
                 }
                 else
                 {
-                    _cultureIndex[culture].Add(kv.Key, kv.Value);
+                    _cultureIndex[culture].Add(key, kv.Value);
                 }
             }
         }
@@ -96,6 +98,8 @@ namespace Archimedes.Framework.Localisation
         /// <returns></returns>
         public string Find(CultureInfo culture, string key)
         {
+            key = key.ToLower();
+
             var translation = FindExact(culture, key);
 
             if (translation == null && culture.IsNeutralCulture)
@@ -121,7 +125,7 @@ namespace Archimedes.Framework.Localisation
         }
 
 
-        public string FindExact(CultureInfo culture, string key)
+        private string FindExact(CultureInfo culture, string key)
         {
             if (culture == null) throw new ArgumentNullException("culture");
 

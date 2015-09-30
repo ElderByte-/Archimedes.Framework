@@ -12,6 +12,7 @@ namespace Archimedes.Framework.Test.Localisation
     public class LocalisationServiceTest
     {
         [TestCase("en-US", "simple.test", "Hello world!")]
+        [TestCase("en-US", "simple.Test", "Hello world!")]  // Test case ignoring
         [TestCase("en-US", "simple.test.gen", "Gun Bun!")]
         [TestCase("de", "simple.test", "Hallo Welt!")]
         [TestCase("en", "simple.test", "Hello world!")]
