@@ -104,6 +104,12 @@
     </None>
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
+    <None Include="Resources\messages\additional_de.properties">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\messages\additional.properties">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\messages\myMessages_de.properties">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

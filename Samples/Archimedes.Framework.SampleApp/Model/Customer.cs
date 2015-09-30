@@ -25,7 +25,7 @@ namespace Archimedes.Framework.SampleApp.Model
 
         public override string ToString()
         {
-            return string.Format("{0} - {1} ({2} Years)", Id, Name, Age);
+            return string.Format("{0} - {1} (Age: {2})", Id, Name, Age);
         }
     }
 }

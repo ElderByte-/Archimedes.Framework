@@ -95,7 +95,7 @@ namespace Archimedes.Framework.Localisation
 
             if (!CultureInfo.InvariantCulture.Equals(culture))
             {
-                Log.Debug(string.Format("Could not find translation for [{0}] in Culture {1}. Falling back to culture {2}!", key, culture, culture.Parent));
+                Log.Debug(string.Format("Could not find translation for [{0}] in Culture {1}. Falling back to culture {2}!", key, culture, CultureInfo.InvariantCulture.Equals(culture.Parent) ? "Invariant" : culture.Parent.ToString()));
                 // We go up the culture hirarchy until we find a translation
                 return GetTranslation(culture.Parent, key);
             }
