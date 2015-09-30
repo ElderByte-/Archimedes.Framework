@@ -36,7 +36,7 @@ namespace Archimedes.Framework.Localisation
         string GetTranslation(string key, params object[] args);
 
         /// <summary>
-        /// Get the translation in the given culture and text-key
+        /// Get the translation for the given culture and text-key
         /// </summary>
         /// <param name="culture"></param>
         /// <param name="key"></param>

@@ -61,7 +61,7 @@
   <ItemGroup>
     <Compile Include="ConfigurationTest\CommandLinePropertySourceTest.cs" />
     <Compile Include="ConfigurationTest\ConfigurationServiceTest.cs" />
-    <Compile Include="ConfigurationTest\CultureInfoUtilTest.cs" />
+    <Compile Include="Localisation\CultureInfoUtilTest.cs" />
     <Compile Include="ConfigurationTest\PropertiesParserTest.cs" />
     <Compile Include="ConfigurationTest\ServiceConfigTarget.cs" />
     <Compile Include="ConfigurationTest\ValueTest.cs" />
