@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Markup;
 using Archimedes.Framework.Context;
 using Archimedes.Framework.Stereotype;
+using log4net;
 
 namespace Archimedes.Framework.Localisation.WPF
 {
     public class LocalisationExtension : MarkupExtension
     {
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
 
         public LocalisationExtension()
         {
@@ -31,13 +35,25 @@ namespace Archimedes.Framework.Localisation.WPF
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            if (!IsInDesignMode())
+            try
             {
-                var localisationService = ApplicationContext.Instance.Container.Resolve<ILocalisationService>();
-                if (localisationService != null)
+                if (!IsInDesignMode())
                 {
-                    return localisationService.GetTranslation(Id.ToString());
+                    var diContainer = ApplicationContext.Instance.Container;
+                    if (diContainer != null)
+                    {
+                        var localisationService = diContainer.Resolve<ILocalisationService>();
+                        return localisationService.GetTranslation(Id.ToString());
+                    }
+                    else
+                    {
+                        throw new NotSupportedException("Archimedes Dependency Injection Container is not ready, can not access ILocalisationService!");
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Log.Error("Failed to provide localized text!", e);
             }
 
             return Id;
