@@ -61,7 +61,6 @@
   <ItemGroup>
     <Compile Include="ConfigurationTest\CommandLinePropertySourceTest.cs" />
     <Compile Include="ConfigurationTest\ConfigurationServiceTest.cs" />
-    <Compile Include="Localisation\CultureInfoUtilTest.cs" />
     <Compile Include="ConfigurationTest\PropertiesParserTest.cs" />
     <Compile Include="ConfigurationTest\ServiceConfigTarget.cs" />
     <Compile Include="ConfigurationTest\ValueTest.cs" />
@@ -101,8 +100,6 @@
     <Compile Include="ContainerTest\Singletons\Simple\ServiceSingletonA.cs" />
     <Compile Include="ContainerTest\Singletons\Simple\ServiceSingletonB.cs" />
     <Compile Include="ContainerTest\Singletons\Simple\SingletonsTest.cs" />
-    <Compile Include="Localisation\FilePropertiesMessageSourceTest.cs" />
-    <Compile Include="Localisation\LocalisationServiceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

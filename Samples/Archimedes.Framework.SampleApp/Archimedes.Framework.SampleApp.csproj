@@ -37,6 +37,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Archimedes.Localisation, Version=0.0.2.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Archimedes.Localisation.0.0.2.0\lib\net45\Archimedes.Localisation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
       <Private>True</Private>

@@ -8,6 +8,7 @@ using Archimedes.Framework.Localisation;
 using Archimedes.Framework.SampleApp.Model;
 using Archimedes.Framework.SampleApp.Util;
 using Archimedes.Framework.Stereotype;
+using Archimedes.Localisation;
 
 namespace Archimedes.Framework.SampleApp.ViewModels
 {
