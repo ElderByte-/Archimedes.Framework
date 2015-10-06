@@ -16,7 +16,7 @@ namespace Archimedes.Framework.DI.Factories
         }
 
 
-        public override object CreateInstance(ElderBox ctx, HashSet<Type> unresolvedDependencies, object[] providedParameters = null)
+        public override object CreateInstance(ElderBox ctx, ISet<Type> unresolvedDependencies, object[] providedParameters = null)
         {
             var factoryInstance = ctx.Resolve(_factoryMethodReference.FactoryImplementation);
 

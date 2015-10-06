@@ -23,7 +23,7 @@ namespace Archimedes.Framework.DI.Factories
         }
 
 
-        public override object CreateInstance(ElderBox ctx, HashSet<Type> unresolvedDependencies, object[] providedParameters = null)
+        public override object CreateInstance(ElderBox ctx, ISet<Type> unresolvedDependencies, object[] providedParameters = null)
         {
             if (unresolvedDependencies == null) throw new ArgumentNullException("unresolvedDependencies");
             if (providedParameters == null) providedParameters = new object[0];

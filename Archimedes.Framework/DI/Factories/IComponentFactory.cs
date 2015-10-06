@@ -31,7 +31,7 @@ namespace Archimedes.Framework.DI.Factories
         /// <param name="unresolvedDependencies"></param>
         /// <param name="providedParameters"></param>
         /// <returns></returns>
-        object CreateInstance(ElderBox ctx, HashSet<Type> unresolvedDependencies, object[] providedParameters = null);
+        object CreateInstance(ElderBox ctx, ISet<Type> unresolvedDependencies, object[] providedParameters = null);
     }
 
 

@@ -35,6 +35,6 @@ namespace Archimedes.Framework.DI.Factories
 
 
 
-        public abstract object CreateInstance(ElderBox ctx, HashSet<Type> unresolvedDependencies, object[] providedParameters = null);
+        public abstract object CreateInstance(ElderBox ctx, ISet<Type> unresolvedDependencies, object[] providedParameters = null);
     }
 }
