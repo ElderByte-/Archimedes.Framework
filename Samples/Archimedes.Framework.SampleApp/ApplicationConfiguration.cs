@@ -16,8 +16,10 @@ namespace Archimedes.Framework.SampleApp
     {
 
         [ComponentFactory]
-        public ICustomerRepository ProvideCustomerMockRepository()
+        public ICustomerRepository ProvideCustomerMockRepository(IDummyConfigurationService dependency)
         {
+            var value = dependency.GetProperty("blub");
+
             var repo = new MemoryCustomerRepository();
 
             repo.Update(new Customer(1)
