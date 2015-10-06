@@ -8,14 +8,27 @@ using Archimedes.Framework.Util;
 
 namespace Archimedes.Framework.DI
 {
+    /// <summary>
+    /// This class helps to register types to a IModuleConfiguration
+    /// </summary>
     public class ComponentRegisterer
     {
         private readonly IModuleConfiguration _configuration;
 
+        #region Constructor
+
+        /// <summary>
+        /// Creates a new ComponentRegisterer for the given module configuration.
+        /// </summary>
+        /// <param name="configuration"></param>
         public ComponentRegisterer(IModuleConfiguration configuration)
         {
             _configuration = configuration;
         }
+
+        #endregion
+
+        #region Public methods
 
         public void RegisterComponents(IEnumerable<Type> componentTypes)
         {
@@ -40,6 +53,10 @@ namespace Archimedes.Framework.DI
             }
 
         }
+
+        #endregion
+
+        #region Private methods
 
         private void RegisterFactoryMethods(Type componentType)
         {
@@ -81,6 +98,8 @@ namespace Archimedes.Framework.DI
                 _configuration.RegisterSingleton(baseType, componentType);
             }
         }
+
+        #endregion
 
     }
 }
