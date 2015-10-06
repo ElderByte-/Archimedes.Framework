@@ -141,7 +141,7 @@ namespace Archimedes.Framework.DI
         #region Private methods
 
         [DebuggerStepThrough]
-        private object Resolve(Type type, HashSet<Type> unresolvedDependencies)
+        private object Resolve(Type type, ISet<Type> unresolvedDependencies)
         {
             if (type == null) throw new ArgumentNullException("type");
 
@@ -168,7 +168,7 @@ namespace Archimedes.Framework.DI
         /// <param name="instance"></param>
         /// <param name="unresolvedDependencies"></param>
         [DebuggerStepThrough]
-        internal void Autowire(object instance, HashSet<Type> unresolvedDependencies)
+        internal void Autowire(object instance, ISet<Type> unresolvedDependencies)
         {
             try
             {
@@ -219,7 +219,7 @@ namespace Archimedes.Framework.DI
         /// Autofills all fields of the given instance which have the [Value(...)] atribute.
         /// </summary>
         /// <param name="instance"></param>
-        private void AutowireConfiguration(object instance, HashSet<Type> unresolvedDependencies)
+        private void AutowireConfiguration(object instance, ISet<Type> unresolvedDependencies)
         {
             var valueFields = (from f in instance.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public)
                                where f.IsDefined(typeof(ValueAttribute), false)
@@ -249,7 +249,7 @@ namespace Archimedes.Framework.DI
 
 
 
-        private object ResolveInstanceFor(Type type, HashSet<Type> unresolvedDependencies)
+        private object ResolveInstanceFor(Type type, ISet<Type> unresolvedDependencies)
         {
             if(type == null) throw new ArgumentNullException("type");
 
@@ -311,7 +311,7 @@ namespace Archimedes.Framework.DI
         /// <param name="unresolvedDependencies"></param>
         /// <param name="providedParameters"></param>
         /// <returns></returns>
-        internal object[] AutowireParameters(object contextInfo, ParameterInfo[] parameterInfos, HashSet<Type> unresolvedDependencies, object[] providedParameters)
+        internal object[] AutowireParameters(object contextInfo, ParameterInfo[] parameterInfos, ISet<Type> unresolvedDependencies, object[] providedParameters)
         {
             if (parameterInfos == null) throw new ArgumentNullException("parameterInfos");
 
@@ -319,7 +319,13 @@ namespace Archimedes.Framework.DI
 
             foreach (var parameter in parameterInfos)
             {
-                object paramInstance = FindParamInstance(parameter, providedParameters);
+                object paramInstance = null;
+
+                if (providedParameters != null)
+                {
+                    paramInstance = FindParamInstance(parameter, providedParameters);
+                }
+
                 if (paramInstance == null)
                 {
                     paramInstance = ResolveParameterInstance(contextInfo, parameter, unresolvedDependencies);
@@ -336,7 +342,7 @@ namespace Archimedes.Framework.DI
         /// <param name="parameterInfo"></param>
         /// <param name="unresolvedDependencies"></param>
         /// <returns></returns>
-        private object ResolveParameterInstance(object contextInfo, ParameterInfo parameterInfo, HashSet<Type> unresolvedDependencies)
+        private object ResolveParameterInstance(object contextInfo, ParameterInfo parameterInfo, ISet<Type> unresolvedDependencies)
         {
             object parameter;
             try
@@ -370,11 +376,14 @@ namespace Archimedes.Framework.DI
         /// <summary>
         /// Find a matching instance for the given parameter
         /// </summary>
-        /// <param name="parameterInfo"></param>
-        /// <param name="providedParameters"></param>
+        /// <param name="parameterInfo">The requested parameter</param>
+        /// <param name="providedParameters">A list of available arguments</param>
         /// <returns></returns>
         private object FindParamInstance(ParameterInfo parameterInfo, object[] providedParameters)
         {
+            if(parameterInfo == null) throw new ArgumentNullException("parameterInfo");
+            if(providedParameters == null) throw new ArgumentNullException("providedParameters");
+
             if (providedParameters.Length == 0) return null;
             return (from p in providedParameters
                     where parameterInfo.ParameterType.IsInstanceOfType(p)
