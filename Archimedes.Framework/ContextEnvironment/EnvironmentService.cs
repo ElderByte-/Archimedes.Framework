@@ -40,6 +40,8 @@ namespace Archimedes.Framework.ContextEnvironment
             {
                 Log.Warn("Entry assembly not available, loading configuration from default application.properties not possible!");
             }
+
+            PropertySources.Add(new CommandLinePropertySource(Environment.GetCommandLineArgs()));
         }
 
         #region Public Properties
