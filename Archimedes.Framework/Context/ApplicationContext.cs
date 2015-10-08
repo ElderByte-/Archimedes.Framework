@@ -13,32 +13,36 @@ namespace Archimedes.Framework.Context
     /// <summary>
     /// Represents the Application Context, which provides component scanning / auto-configuration.
     /// </summary>
-    public sealed class ApplicationContext
+    public class ApplicationContext
     {
         #region Fields
 
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private const string DefaultContext = "_ELDER_DEFAULT";
-        private readonly Dictionary<string, ElderBox> _contextRegistry = new Dictionary<string, ElderBox>();
         private readonly IEnvironmentService _environmentService = new EnvironmentService();
 
+        private readonly ElderBox _container;
         private List<Type> _components = null; // Lazy initialized!
 
         #endregion
 
-        #region Singleton
+        #region Static builder methods
 
-        private static readonly ApplicationContext _instance = new ApplicationContext();
 
-        public static ApplicationContext Instance
+        public static ApplicationContext Run()
         {
-            get { return _instance; }
+            var context = new ApplicationContext();
+            return context;
         }
+
+
+        #endregion
+
+        #region Constructor
 
         private ApplicationContext()
         {
-            
+            _container = new ElderBox();
         }
 
         #endregion
@@ -54,12 +58,12 @@ namespace Archimedes.Framework.Context
         }
 
         /// <summary>
-        /// Gets the default context which is populated by the auto configuration.
+        /// Gets the DI container 
         /// </summary>
         /// <returns></returns>
         public ElderBox Container
         {
-            get { return _contextRegistry[DefaultContext]; }
+            get { return _container; }
         }
 
 
@@ -78,9 +82,6 @@ namespace Archimedes.Framework.Context
         {
             try
             {
-                var container = new ElderBox();
-                var ctx = RegisterContext(DefaultContext, container);
-
                 var configuration = Environment.Configuration;
 
                 var configurationLoader = new ConfigurationLoader(this);
@@ -89,11 +90,11 @@ namespace Archimedes.Framework.Context
                 var assemblyFiltersStr = configuration.GetOptional(ArchimedesPropertyKeys.ComponentScanAssemblies);
                 var assemblyFilters = assemblyFiltersStr.Map(x => x.Split(',')).OrElse(new string[0]);
 
-                var configurer = new ComponentRegisterer(container.Configuration);
+                var configurer = new ComponentRegisterer(_container.Configuration);
                 configurer.RegisterComponents(ScanComponents(assemblyFilters));
 
-                ctx.RegisterInstance<IEnvironmentService>(_environmentService);
-                ctx.RegisterInstance<ApplicationContext>(this);
+                _container.RegisterInstance<IEnvironmentService>(_environmentService);
+                _container.RegisterInstance<ApplicationContext>(this);
             }
             catch (Exception e)
             {
@@ -101,34 +102,7 @@ namespace Archimedes.Framework.Context
             }
         }
 
-        
-
-        /// <summary>
-        /// Get a named DI context
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public ElderBox ContainerByName(string name)
-        {
-            if (_contextRegistry.ContainsKey(name))
-            {
-                return _contextRegistry[name];
-            }
-            
-            throw new NotSupportedException("ElderBox Context with name '" + name + "' could not be found. Did you forget to register it?" );
-        }
-
-        /// <summary>
-        /// Register a named DI context.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="diContext"></param>
-        public ElderBox RegisterContext(string name, ElderBox diContext)
-        {
-            _contextRegistry.Add(name, diContext);
-            return diContext;
-        }
-
+       
         /// <summary>
         /// Finds all types in the application context which are known components
         /// </summary>

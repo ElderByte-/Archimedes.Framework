@@ -85,7 +85,7 @@ namespace Archimedes.Framework.DI
         public object Create(Type t, params object[] args)
         {
             var factory = new TypeComponentFactory(t, null, false, null);
-            return factory.CreateInstance(this, new HashSet<Type>(), args);
+            return CreateInstance(factory, new HashSet<Type>(), args);
         }
 
 
@@ -267,7 +267,7 @@ namespace Archimedes.Framework.DI
 
             if (factory != null)
             {
-                instance = factory.CreateInstance(this, unresolvedDependencies);
+                instance = CreateInstance(factory, unresolvedDependencies);
 
                 var implementationTargetInterfaces = FetchImplementationTargets(instance.GetType());
 
@@ -283,6 +283,22 @@ namespace Archimedes.Framework.DI
             {
                 throw new AutowireException("Can not create instance for type '" + type.Name + "', no provider or factory found!");
             }
+
+            return instance;
+        }
+
+        /// <summary>
+        /// Creates a new instance of a component using the provided factory.
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <param name="unresolvedDependencies"></param>
+        /// <param name="providedParameters"></param>
+        /// <returns></returns>
+        private object CreateInstance(IComponentFactory factory, ISet<Type> unresolvedDependencies, object[] providedParameters = null)
+        {
+            var instance = factory.CreateInstance(this, unresolvedDependencies, providedParameters);
+            
+            // TODO Execute post-creation hooks
 
             return instance;
         }

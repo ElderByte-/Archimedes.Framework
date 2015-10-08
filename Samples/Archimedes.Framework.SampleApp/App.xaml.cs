@@ -28,18 +28,14 @@ namespace Archimedes.Framework.SampleApp
 
             Log.Info("Loading SampleApp...");
 
-            var ctx = ApplicationContext.Instance;
-
-            // If necessary, you can add command-line support for the configuration properties
-            ctx.Environment.PropertySources.Add(new CommandLinePropertySource(e.Args));
+            var context = ApplicationContext.Run();
 
             // EnableAutoConfiguration will do all the heavy lifting and initialize the framework.
-            ApplicationContext.Instance.EnableAutoConfiguration();
+            context.EnableAutoConfiguration();
 
             // We can now use the IoC Container of Archimedes
-
             // We need to pull in the root components with a manual call to autowire:
-            ApplicationContext.Instance.Container.Autowire(this);
+            context.Container.Autowire(this);
             // The _mainViewModel field has now been injected.
 
             Log.Info("Archimedes Framework initialized, starting main window...");

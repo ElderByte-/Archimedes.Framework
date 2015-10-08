@@ -105,6 +105,7 @@
     <Compile Include="Stereotype\ComponentUtil.cs" />
     <Compile Include="Stereotype\ControllerAttribute.cs" />
     <Compile Include="Stereotype\InjectAttribute.cs" />
+    <Compile Include="Stereotype\PostConstructAttribute.cs" />
     <Compile Include="Stereotype\PrimaryAttribute.cs" />
     <Compile Include="Stereotype\ServiceAttribute.cs" />
     <Compile Include="Util\ReflectionUtil.cs" />
