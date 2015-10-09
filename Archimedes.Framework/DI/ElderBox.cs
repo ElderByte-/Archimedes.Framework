@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using Archimedes.Framework.Context;
 using Archimedes.Framework.ContextEnvironment;
 using Archimedes.Framework.DI.Attribute;
+using Archimedes.Framework.DI.Config;
 using Archimedes.Framework.DI.Factories;
 using Archimedes.Framework.Stereotype;
 using Archimedes.Framework.Util;
@@ -130,36 +131,16 @@ namespace Archimedes.Framework.DI
             Autowire(instance, new HashSet<Type>());
         }
 
-        [Obsolete("Move all register method to configuration, add a InstanceFactoryProvider...")]
-        public void RegisterInstance<T>(T serviceInstance)
-        {
-            UpdateSingletonInstance(typeof(T), serviceInstance);
-        }
+
 
         #endregion
 
-        #region Private methods
+        #region Internal methods
 
-        [DebuggerStepThrough]
-        private object Resolve(Type type, ISet<Type> unresolvedDependencies)
+        [Obsolete("Use the module configuration to register singleton instances!")]
+        internal void RegisterInstance<T>(T serviceInstance)
         {
-            if (type == null) throw new ArgumentNullException("type");
-
-
-            if (_serviceRegistry.ContainsKey(type))
-            {
-                return _serviceRegistry[type];
-            }
-
-            unresolvedDependencies.Add(type); // Mark this type as unresolved
-            var instance = ResolveInstanceFor(type, unresolvedDependencies);
-
-            if (instance == null)
-            {
-                throw new NotSupportedException("Something went wrong while resolving instance for type " + type.Name);
-            }
-
-            return instance;
+            UpdateSingletonInstance(typeof(T), serviceInstance);
         }
 
         /// <summary>
@@ -197,7 +178,7 @@ namespace Archimedes.Framework.DI
                             {
                                 throw;
                             }
-                            throw new AutowireException("Autowiring of Field " + targetField.Name + "("+targetField.FieldType.Name+") has failed!", e);
+                            throw new AutowireException("Autowiring of Field " + targetField.Name + "(" + targetField.FieldType.Name + ") has failed!", e);
                         }
                     }
                 }
@@ -213,6 +194,66 @@ namespace Archimedes.Framework.DI
 
             AutowireConfiguration(instance, unresolvedDependencies);
         }
+
+        /// <summary>
+        /// Resolves all parameter instances of the given constructor.
+        /// </summary>
+        /// <param name="contextInfo"></param>
+        /// <param name="parameterInfos"></param>
+        /// <param name="unresolvedDependencies"></param>
+        /// <param name="providedParameters"></param>
+        /// <returns></returns>
+        internal object[] AutowireParameters(object contextInfo, ParameterInfo[] parameterInfos, ISet<Type> unresolvedDependencies, object[] providedParameters)
+        {
+            if (parameterInfos == null) throw new ArgumentNullException("parameterInfos");
+
+            var parameters = new List<object>();
+
+            foreach (var parameter in parameterInfos)
+            {
+                object paramInstance = null;
+
+                if (providedParameters != null)
+                {
+                    paramInstance = FindParamInstance(parameter, providedParameters);
+                }
+
+                if (paramInstance == null)
+                {
+                    paramInstance = ResolveParameterInstance(contextInfo, parameter, unresolvedDependencies);
+                }
+                parameters.Add(paramInstance);
+            }
+            return parameters.ToArray();
+        }
+
+        #endregion
+
+        #region Private methods
+
+        [DebuggerStepThrough]
+        private object Resolve(Type type, ISet<Type> unresolvedDependencies)
+        {
+            if (type == null) throw new ArgumentNullException("type");
+
+
+            if (_serviceRegistry.ContainsKey(type))
+            {
+                return _serviceRegistry[type];
+            }
+
+            unresolvedDependencies.Add(type); // Mark this type as unresolved
+            var instance = ResolveInstanceFor(type, unresolvedDependencies);
+
+            if (instance == null)
+            {
+                throw new NotSupportedException("Something went wrong while resolving instance for type " + type.Name);
+            }
+
+            return instance;
+        }
+
+        
 
 
         /// <summary>
@@ -297,10 +338,7 @@ namespace Archimedes.Framework.DI
         private object CreateInstance(IComponentFactory factory, ISet<Type> unresolvedDependencies, object[] providedParameters = null)
         {
             var instance = factory.CreateInstance(this, unresolvedDependencies, providedParameters);
-            
-            // TODO Execute post-creation hooks
-
-            return instance;
+            return OnPostConstruct(instance, ""); // TODO Component name
         }
 
         private IEnumerable<Type> FetchImplementationTargets(Type implementation)
@@ -318,38 +356,7 @@ namespace Archimedes.Framework.DI
             return targets;
         }
 
-
-        /// <summary>
-        /// Resolves all parameter instances of the given constructor.
-        /// </summary>
-        /// <param name="contextInfo"></param>
-        /// <param name="parameterInfos"></param>
-        /// <param name="unresolvedDependencies"></param>
-        /// <param name="providedParameters"></param>
-        /// <returns></returns>
-        internal object[] AutowireParameters(object contextInfo, ParameterInfo[] parameterInfos, ISet<Type> unresolvedDependencies, object[] providedParameters)
-        {
-            if (parameterInfos == null) throw new ArgumentNullException("parameterInfos");
-
-            var parameters = new List<object>();
-
-            foreach (var parameter in parameterInfos)
-            {
-                object paramInstance = null;
-
-                if (providedParameters != null)
-                {
-                    paramInstance = FindParamInstance(parameter, providedParameters);
-                }
-
-                if (paramInstance == null)
-                {
-                    paramInstance = ResolveParameterInstance(contextInfo, parameter, unresolvedDependencies);
-                }
-                parameters.Add(paramInstance);
-            }
-            return parameters.ToArray();
-        }
+        
 
         /// <summary>
         /// Returns the instance for a parameter type
@@ -423,6 +430,79 @@ namespace Archimedes.Framework.DI
                 _serviceRegistry[type] = instance;
             }
         }
+
+        #endregion
+
+
+        #region Event handlers
+
+
+        /// <summary>
+        /// Occurs when a component has been created.
+        /// </summary>
+        /// <param name="component"></param>
+        private object OnPostConstruct(object component, string name)
+        {
+            component = OnBeforeInitialisation(component, name);
+
+            // Initialisation callbacks
+            component = OnInitialisation(component, name);
+
+            component = OnAfterInitialisation(component, name);
+
+            return component;
+        }
+
+        /// <summary>
+        /// Occurs when the component should be initialized.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private object OnInitialisation(object component, string name)
+        {
+            // If a method with the [PostConstruct] Attribute is present, execute the method.
+            var initMethdo = component.GetType().GetMethods().FirstOrDefault(x => System.Attribute.IsDefined(x, typeof (PostConstructAttribute)));
+            if (initMethdo != null)
+            {
+                initMethdo.Invoke(component, null);
+            }
+
+            return component;
+        }
+
+
+        /// <summary>
+        /// Occurs when a component has been created and autowired, but before its initialisation call backs.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private object OnBeforeInitialisation(object component, string name)
+        {
+            foreach (var componentPostProcessor in Configuration.AllComponentPostProcessors)
+            {
+                component = componentPostProcessor.postProcessBeforeInitialisation(component, name);
+            }
+            return component;
+        }
+
+
+        /// <summary>
+        /// Occurs when a component has been created and autowired and initialisation callbacks have run.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private object OnAfterInitialisation(object component, string name)
+        {
+            foreach (var componentPostProcessor in Configuration.AllComponentPostProcessors)
+            {
+                component = componentPostProcessor.postProcessAfterInitialisation(component, name);
+            }
+            return component;
+        }
+
 
         #endregion
 

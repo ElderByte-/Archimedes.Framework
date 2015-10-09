@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Archimedes.Framework.AOP;
+using Archimedes.Framework.DI.Config;
 using Archimedes.Framework.DI.Factories;
 using log4net;
 
@@ -17,6 +18,16 @@ namespace Archimedes.Framework.DI
 
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly Dictionary<Type, ImplementationRegistry> _componentRegistry = new Dictionary<Type, ImplementationRegistry>();
+        private readonly List<IComponentPostProcessor> _componentPostProcessors = new List<IComponentPostProcessor>();
+
+        #endregion
+
+        #region Properties
+
+        public List<IComponentPostProcessor> AllComponentPostProcessors {
+            get { return _componentPostProcessors; }
+        }
+
 
         #endregion
 

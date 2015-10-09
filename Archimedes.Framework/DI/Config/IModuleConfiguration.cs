@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Archimedes.Framework.DI.Config;
 using Archimedes.Framework.DI.Factories;
 
 namespace Archimedes.Framework.DI
@@ -8,6 +10,11 @@ namespace Archimedes.Framework.DI
     /// </summary>
     public interface IModuleConfiguration
     {
+        /// <summary>
+        /// Gets all component post processors to apply
+        /// </summary>
+        List<IComponentPostProcessor> AllComponentPostProcessors { get; }
+
         /// <summary>
         /// Resolves a component factory for the given type.
         /// </summary>

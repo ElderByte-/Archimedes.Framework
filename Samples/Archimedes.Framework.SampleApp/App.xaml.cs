@@ -23,15 +23,9 @@ namespace Archimedes.Framework.SampleApp
         protected override void OnStartup(StartupEventArgs e)
         {
             // Setup logging
-            new LoggerConfiguration(AppUtil.ApplicaitonBinaryFolder, "Debug");
-
-
-            Log.Info("Loading SampleApp...");
+            new LoggerConfiguration(AppUtil.ApplicaitonBinaryFolder, "Info");   // log.level will be overridden when archimedes starts
 
             var context = ApplicationContext.Run();
-
-            // EnableAutoConfiguration will do all the heavy lifting and initialize the framework.
-            context.EnableAutoConfiguration();
 
             // We can now use the IoC Container of Archimedes
             // We need to pull in the root components with a manual call to autowire:

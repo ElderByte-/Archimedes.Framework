@@ -19,7 +19,7 @@ namespace Archimedes.Framework.SampleApp
 
 
         public LoggerConfiguration(string appDataFolder, string logLevel) :
-            this(appDataFolder, LogLevelMap.GetLogLevel(logLevel))
+            this(appDataFolder, LogManager.GetRepository().LevelMap[logLevel])
         {
 
         }
@@ -67,31 +67,5 @@ namespace Archimedes.Framework.SampleApp
         }
     }
 
-    public static class LogLevelMap
-    {
-        static readonly LevelMap LevelMap = new LevelMap();
-
-        static LogLevelMap()
-        {
-            foreach (FieldInfo fieldInfo in typeof(Level).GetFields(BindingFlags.Public | BindingFlags.Static))
-            {
-                if (fieldInfo.FieldType == typeof(Level))
-                {
-                    LevelMap.Add((Level)fieldInfo.GetValue(null));
-                }
-            }
-        }
-
-        public static Level GetLogLevel(string logLevel)
-        {
-            if (string.IsNullOrWhiteSpace(logLevel))
-            {
-                return null;
-            }
-            else
-            {
-                return LevelMap[logLevel];
-            }
-        }
-    }
+    
 }

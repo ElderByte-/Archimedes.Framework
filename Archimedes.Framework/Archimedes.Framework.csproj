@@ -85,6 +85,7 @@
     <Compile Include="ContextEnvironment\UnknownParameterException.cs" />
     <Compile Include="DI\Attribute\ValueAttribute.cs" />
     <Compile Include="DI\Factories\ComponentFactoryBase.cs" />
+    <Compile Include="DI\Config\IComponentPostProcessor.cs" />
     <Compile Include="DI\Factories\FactoryMethodReference.cs" />
     <Compile Include="DI\Factories\TypeComponentFactory.cs" />
     <Compile Include="DI\Factories\FactoryMethodComponentFactory.cs" />
@@ -95,8 +96,8 @@
     <Compile Include="DI\AutowireException.cs" />
     <Compile Include="DI\CircularDependencyException.cs" />
     <Compile Include="DI\ElderBox.cs" />
-    <Compile Include="DI\ElderModuleConfiguration.cs" />
-    <Compile Include="DI\IModuleConfiguration.cs" />
+    <Compile Include="DI\Config\ElderModuleConfiguration.cs" />
+    <Compile Include="DI\Config\IModuleConfiguration.cs" />
     <Compile Include="DI\ImplementationRegistry.cs" />
     <Compile Include="DI\ValueConfigurator.cs" />
     <Compile Include="Localisation\LocalisationServiceImpl.cs" />

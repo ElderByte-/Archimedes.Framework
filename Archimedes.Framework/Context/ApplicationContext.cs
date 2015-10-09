@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Archimedes.Framework.Context.Configuration;
@@ -7,6 +8,7 @@ using Archimedes.Framework.ContextEnvironment;
 using Archimedes.Framework.DI;
 using Archimedes.Framework.Stereotype;
 using log4net;
+using log4net.Repository.Hierarchy;
 
 namespace Archimedes.Framework.Context
 {
@@ -22,19 +24,23 @@ namespace Archimedes.Framework.Context
         private readonly IEnvironmentService _environmentService = new EnvironmentService();
 
         private readonly ElderBox _container;
-        private List<Type> _components = null; // Lazy initialized!
+
+        private bool _isAutoConfigured = false;
 
         #endregion
 
         #region Static builder methods
 
-
+        /// <summary>
+        /// Runs the application and creates a applicaiton context
+        /// </summary>
+        /// <returns></returns>
         public static ApplicationContext Run()
         {
             var context = new ApplicationContext();
+            context.EnableAutoConfiguration();
             return context;
         }
-
 
         #endregion
 
@@ -43,6 +49,19 @@ namespace Archimedes.Framework.Context
         private ApplicationContext()
         {
             _container = new ElderBox();
+
+            var textArt = string.Format(@"
+                    _     _                    _           
+     /\            | |   (_)                  | |          
+    /  \   _ __ ___| |__  _ _ __ ___   ___  __| | ___  ___ 
+   / /\ \ | '__/ __| '_ \| | '_ ` _ \ / _ \/ _` |/ _ \/ __|
+  / ____ \| | | (__| | | | | | | | | |  __/ (_| |  __/\__ \
+ /_/    \_\_|  \___|_| |_|_|_| |_| |_|\___|\__,_|\___||___/
+            v{0}                                               
+                                                           ", typeof(ApplicationContext).Assembly.GetName().Version);
+
+            Log.Info("Starting Archimedes.Framework ...\n" + textArt);
+
         }
 
         #endregion
@@ -71,7 +90,6 @@ namespace Archimedes.Framework.Context
 
         #region Public methods
 
-
         /// <summary>
         ///  Enables Auto-Configuration, which basically scans for Components, handles the configuration
         /// and makes the app ready for usage.
@@ -80,9 +98,16 @@ namespace Archimedes.Framework.Context
         /// </summary>
         public void EnableAutoConfiguration()
         {
-            try
+            if (!_isAutoConfigured)
             {
                 var configuration = Environment.Configuration;
+
+                configuration.GetOptional("application.log.level").IfPresent(logLevel =>
+                {
+                    var hierarchy = (Hierarchy)LogManager.GetRepository();
+                    hierarchy.Root.Level = hierarchy.LevelMap[logLevel];
+                });
+
 
                 var configurationLoader = new ConfigurationLoader(this);
                 configurationLoader.Load();
@@ -95,14 +120,12 @@ namespace Archimedes.Framework.Context
 
                 _container.RegisterInstance<IEnvironmentService>(_environmentService);
                 _container.RegisterInstance<ApplicationContext>(this);
-            }
-            catch (Exception e)
-            {
-                throw;
+
+                _isAutoConfigured = true;
             }
         }
 
-       
+
         /// <summary>
         /// Finds all types in the application context which are known components
         /// </summary>
@@ -110,13 +133,9 @@ namespace Archimedes.Framework.Context
         /// <returns></returns>
         private IEnumerable<Type> ScanComponents(params string[] assemblyFilters)
         {
-            if (_components == null)
-            {
-                var componentScanner = ComponentUtil.BuildComponentScanner();
-                Log.Info("Scanning for [Component] / [Service] / etc. classes...");
-                _components = componentScanner.ScanByAttribute(assemblyFilters).ToList();
-            }
-            return _components;
+            var componentScanner = ComponentUtil.BuildComponentScanner();
+            Log.Info("Scanning for [Component] / [Service] / etc. classes...");
+            return componentScanner.ScanByAttribute(assemblyFilters).ToList();
         }
 
         #endregion
