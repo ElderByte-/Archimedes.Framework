@@ -14,7 +14,6 @@ namespace Archimedes.Framework.SampleApp
     [ComponentBinding(typeof(IExternalService), typeof(ExternalService))] // Register a component manually
     public class ApplicationConfiguration
     {
-
         [ComponentFactory]
         public ICustomerRepository ProvideCustomerMockRepository(IDummyConfigurationService dependency)
         {

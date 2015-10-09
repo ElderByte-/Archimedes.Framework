@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Archimedes.Framework.Context.Annotation;
 using Archimedes.Framework.Context.Configuration;
 using Archimedes.Framework.ContextEnvironment;
 using Archimedes.Framework.DI;
@@ -26,6 +27,15 @@ namespace Archimedes.Framework.Context
         private readonly ElderBox _container;
 
         private bool _isAutoConfigured = false;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Fired when this application context is initialized
+        /// </summary>
+        public event EventHandler ContextInitialized;
 
         #endregion
 
@@ -88,7 +98,7 @@ namespace Archimedes.Framework.Context
 
         #endregion
 
-        #region Public methods
+        #region Private methods
 
         /// <summary>
         ///  Enables Auto-Configuration, which basically scans for Components, handles the configuration
@@ -96,7 +106,7 @@ namespace Archimedes.Framework.Context
         /// 
         ///  Components must be marked with [Service] or [Controller].
         /// </summary>
-        public void EnableAutoConfiguration()
+        private void EnableAutoConfiguration()
         {
             if (!_isAutoConfigured)
             {
@@ -108,7 +118,6 @@ namespace Archimedes.Framework.Context
                     hierarchy.Root.Level = hierarchy.LevelMap[logLevel];
                 });
 
-
                 var configurationLoader = new ConfigurationLoader(this);
                 configurationLoader.Load();
 
@@ -116,15 +125,17 @@ namespace Archimedes.Framework.Context
                 var assemblyFilters = assemblyFiltersStr.Map(x => x.Split(',')).OrElse(new string[0]);
 
                 var configurer = new ComponentRegisterer(_container.Configuration);
-                configurer.RegisterComponents(ScanComponents(assemblyFilters));
+                var allFoundComponents = ScanComponents(assemblyFilters);
+                configurer.RegisterComponents(allFoundComponents);
 
                 _container.RegisterInstance<IEnvironmentService>(_environmentService);
                 _container.RegisterInstance<ApplicationContext>(this);
 
                 _isAutoConfigured = true;
+
+                OnContextInitialized(allFoundComponents);
             }
         }
-
 
         /// <summary>
         /// Finds all types in the application context which are known components
@@ -136,6 +147,59 @@ namespace Archimedes.Framework.Context
             var componentScanner = ComponentUtil.BuildComponentScanner();
             Log.Info("Scanning for [Component] / [Service] / etc. classes...");
             return componentScanner.ScanByAttribute(assemblyFilters).ToList();
+        }
+
+        /// <summary>
+        /// Instantiate eager components
+        /// </summary>
+        private void InstantiateEagerComponents(IEnumerable<Type> components)
+        {
+            foreach (var componentType in components)
+            {
+                if (IsEagerRequested(componentType))
+                {
+                    _container.Resolve(componentType);
+                }
+            }
+        }
+
+        private bool IsEagerRequested(Type componentType)
+        {
+            // Components makred with [Eager]
+            if (Attribute.IsDefined(componentType, typeof(EagerAttribute)))
+            {
+                return true;
+            }
+
+            // Configuration Components are always loaded eagerly
+            if (Attribute.IsDefined(componentType, typeof(ConfigurationAttribute)))
+            {
+                return true;
+            }
+
+            // Components which have any method marked with [PostConstruct]
+            var hasPostConstruct = componentType.GetMethods().Any(x => System.Attribute.IsDefined(x, typeof(PostConstructAttribute)));
+            if (hasPostConstruct)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
+
+        #region Event handlers
+
+        /// <summary>
+        /// Occurs when this application context has loaded
+        /// </summary>
+        private void OnContextInitialized(IEnumerable<Type> components)
+        {
+            if (ContextInitialized != null)
+                ContextInitialized(this, EventArgs.Empty);
+
+            InstantiateEagerComponents(components);
+            
         }
 
         #endregion

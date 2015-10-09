@@ -6,7 +6,7 @@ namespace Archimedes.Framework.Stereotype
 {
     public static class ComponentUtil
     {
-        public static readonly Type[] ComponentAttributes = { typeof(ServiceAttribute), typeof(ComponentAttribute), typeof(ControllerAttribute) };
+        public static readonly Type[] ComponentAttributes = { typeof(ServiceAttribute), typeof(ComponentAttribute), typeof(ControllerAttribute), typeof(ConfigurationAttribute) };
 
 
         /// <summary>

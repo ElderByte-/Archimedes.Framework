@@ -86,6 +86,7 @@
     <Compile Include="Model\ICustomerRepository.cs" />
     <Compile Include="Model\IDummyConfigurationService.cs" />
     <Compile Include="Model\IExternalService.cs" />
+    <Compile Include="SampleConfiguration.cs" />
     <Compile Include="Util\AppUtil.cs" />
     <Compile Include="Util\RelayCommand.cs" />
     <Compile Include="ViewModels\CustomersViewModel.cs" />

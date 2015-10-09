@@ -56,9 +56,6 @@ namespace Archimedes.Framework.Context.Configuration
 
             var configurationTypes = FindAllConfigurationTypes();
 
-            var registerer = new ComponentRegisterer(_ctx.Container.Configuration);
-            registerer.RegisterComponents(configurationTypes);
-
             // TODO Loading configuration - is actually just handling the Attributes on them
             // TODO Maybe just generalize an component load interceptor which can scan for the attributes of each loaded component
 
