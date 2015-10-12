@@ -106,7 +106,7 @@ namespace Archimedes.Framework.Context
         /// 
         ///  Components must be marked with [Service] or [Controller].
         /// </summary>
-        private void EnableAutoConfiguration()
+        protected void EnableAutoConfiguration()
         {
             if (!_isAutoConfigured)
             {

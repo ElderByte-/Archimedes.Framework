@@ -41,8 +41,8 @@
       <HintPath>..\..\packages\Archimedes.Localisation.0.0.3.0\lib\net45\Archimedes.Localisation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Archimedes.Patterns, Version=1.0.12.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\archimedes.patterns.1.0.12.0\lib\net40\Archimedes.Patterns.dll</HintPath>
+    <Reference Include="Archimedes.Patterns, Version=1.0.13.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Archimedes.Patterns.1.0.13.0\lib\net40\Archimedes.Patterns.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
@@ -79,6 +79,7 @@
     <Compile Include="ApplicationConfiguration.cs" />
     <Compile Include="LoggerConfiguration.cs" />
     <Compile Include="Mock\MemoryCustomerRepository.cs" />
+    <Compile Include="Model\AutoSetupService.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\CustomerService.cs" />
     <Compile Include="Model\DummyConfigurationService.cs" />

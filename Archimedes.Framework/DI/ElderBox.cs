@@ -287,7 +287,7 @@ namespace Archimedes.Framework.DI
                         if (valueAttrs.Length > 0)
                         {
                             var valueAttr = (ValueAttribute) valueAttrs[0];
-                            configurator.SetValue(targetField, instance, valueAttr.Expression);
+                            configurator.SetValueSave(targetField, instance, valueAttr.Expression);
                         }
                     }
                 }

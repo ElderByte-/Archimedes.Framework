@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Archimedes.Framework.ContextEnvironment.Properties;
+using Archimedes.Framework.Util;
+using Archimedes.Patterns.Utils;
 using log4net;
 
 namespace Archimedes.Framework.DI
@@ -25,6 +27,43 @@ namespace Archimedes.Framework.DI
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Set the value of the given field to the value of the evaluated expression.
+        /// If this fails, no exception is thrown.
+        /// </summary>
+        /// <param name="field">The field to set</param>
+        /// <param name="instance">The instance which field is set</param>
+        /// <param name="valueExpression">An expression to evaluate</param>
+        /// <returns>Returns true upon success</returns>
+        /// <exception cref="ValueConfigurationException"></exception>
+        public bool SetValueSave(FieldInfo field, object instance, string valueExpression)
+        {
+            try
+            {
+                SetValue(field, instance, valueExpression);
+                return true;
+            }catch(ValueConfigurationException e)
+            {
+                if (Log.IsDebugEnabled)
+                {
+                    Log.Debug(e);
+                }
+                else
+                {
+                    // Avoid too much log noise, since this happens when properteis just are not set
+                    Log.Warn(e.Message);
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Set the value of the given field to the value of the evaluated expression
+        /// </summary>
+        /// <param name="field">The field to set</param>
+        /// <param name="instance">The instance which field is set</param>
+        /// <param name="valueExpression">An expression to evaluate</param>
+        /// <exception cref="ValueConfigurationException"></exception>
         public void SetValue(FieldInfo field, object instance, string valueExpression)
         {
             try
@@ -55,8 +94,13 @@ namespace Archimedes.Framework.DI
             });
         }
 
-
-        private void SetValueAutoConvert(FieldInfo field, object instance, string value)
+        /// <summary>
+        /// Set the given value to the given field of the given instance
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="instance"></param>
+        /// <param name="value"></param>
+        private static void SetValueAutoConvert(FieldInfo field, object instance, string value)
         {
             if (field.FieldType == typeof(string))
             {
@@ -64,17 +108,46 @@ namespace Archimedes.Framework.DI
             }
             else
             {
+                var targetType = field.FieldType;
+                var propValue = Convert(value, targetType, CultureInfo.InvariantCulture);
                 try
                 {
-                    var typeConverter = TypeDescriptor.GetConverter(field.FieldType);
-                    object propValue = typeConverter.ConvertFromString(null, CultureInfo.InvariantCulture, value);
                     field.SetValue(instance, propValue);
                 }
-                catch (NotSupportedException e)
+                catch (Exception e)
                 {
-                    throw new NotSupportedException("The value configurator does not support converting a string '" + value + "' to your '" + field.FieldType + "' type!", e);
+                    throw new NotSupportedException(string.Format("Failed to set field '{0}' to value '{1}'!", field, propValue), e);
                 }
             }
         }
+
+        /// <summary>
+        /// Converts the given string value
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetType"></param>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        /// <exception cref="FormatException"></exception>
+        private static object Convert(string value, Type targetType, CultureInfo culture)
+        {
+            try
+            {
+                if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    if (string.IsNullOrEmpty(value)) return null;
+                    var valueType = Nullable.GetUnderlyingType(targetType);
+                    return Convert(value, valueType, culture);
+                }
+
+                return ParseUtil.Parse(value, targetType, culture);
+            }
+            catch (FormatException e)
+            {
+                throw new NotSupportedException("The value configurator does not support converting a string '" + value + "' to your '" + targetType + "' type!", e);
+            }
+
+        }
+       
     }
 }
