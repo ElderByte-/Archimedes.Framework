@@ -39,8 +39,8 @@
     <AssemblyOriginatorKeyFile>Archimedes.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Archimedes.Localisation, Version=0.0.2.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Archimedes.Localisation.0.0.2.0\lib\net45\Archimedes.Localisation.dll</HintPath>
+    <Reference Include="Archimedes.Localisation, Version=0.0.3.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Archimedes.Localisation.0.0.3.0\lib\net45\Archimedes.Localisation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Archimedes.Patterns, Version=1.0.12.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
@@ -63,7 +63,10 @@
     <Compile Include="AOP\AOPUitl.cs" />
     <Compile Include="ContextEnvironment\Properties\PropertySourceException.cs" />
     <Compile Include="Context\Annotation\ComponentBindingAttribute.cs" />
+    <Compile Include="Context\ApplicationContextException.cs" />
+    <Compile Include="Context\ApplicationContextInitialisationException.cs" />
     <Compile Include="Context\Configuration\Providers\ComponentBindingProvider.cs" />
+    <Compile Include="DI\ComponentCreationException.cs" />
     <Compile Include="DI\ComponentRegisterer.cs" />
     <Compile Include="AOP\AttributeScanner.cs" />
     <Compile Include="Context\Configuration\ConfigurationLoader.cs" />
@@ -84,6 +87,7 @@
     <Compile Include="ContextEnvironment\Properties\PropertyStore.cs" />
     <Compile Include="ContextEnvironment\UnknownParameterException.cs" />
     <Compile Include="DI\Attribute\ValueAttribute.cs" />
+    <Compile Include="DI\ElderBoxException.cs" />
     <Compile Include="DI\Factories\ComponentFactoryBase.cs" />
     <Compile Include="DI\Config\IComponentPostProcessor.cs" />
     <Compile Include="DI\Factories\FactoryMethodReference.cs" />
@@ -91,6 +95,7 @@
     <Compile Include="DI\Factories\FactoryMethodComponentFactory.cs" />
     <Compile Include="DI\Factories\IComponentFactory.cs" />
     <Compile Include="DI\ModuleConfigurationBuilder.cs" />
+    <Compile Include="DI\PostConstructHandlerException.cs" />
     <Compile Include="DI\ValueConfigurationException.cs" />
     <Compile Include="DI\AmbiguousMappingException.cs" />
     <Compile Include="DI\AutowireException.cs" />

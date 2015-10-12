@@ -56,7 +56,7 @@ namespace Archimedes.Framework.Context
 
         #region Constructor
 
-        private ApplicationContext()
+        protected ApplicationContext()
         {
             _container = new ElderBox();
 
@@ -110,30 +110,37 @@ namespace Archimedes.Framework.Context
         {
             if (!_isAutoConfigured)
             {
-                var configuration = Environment.Configuration;
-
-                configuration.GetOptional("application.log.level").IfPresent(logLevel =>
+                try
                 {
-                    var hierarchy = (Hierarchy)LogManager.GetRepository();
-                    hierarchy.Root.Level = hierarchy.LevelMap[logLevel];
-                });
+                    var configuration = Environment.Configuration;
 
-                var configurationLoader = new ConfigurationLoader(this);
-                configurationLoader.Load();
+                    configuration.GetOptional("application.log.level").IfPresent(logLevel =>
+                    {
+                        var hierarchy = (Hierarchy) LogManager.GetRepository();
+                        hierarchy.Root.Level = hierarchy.LevelMap[logLevel];
+                    });
 
-                var assemblyFiltersStr = configuration.GetOptional(ArchimedesPropertyKeys.ComponentScanAssemblies);
-                var assemblyFilters = assemblyFiltersStr.Map(x => x.Split(',')).OrElse(new string[0]);
+                    var configurationLoader = new ConfigurationLoader(this);
+                    configurationLoader.Load();
 
-                var configurer = new ComponentRegisterer(_container.Configuration);
-                var allFoundComponents = ScanComponents(assemblyFilters);
-                configurer.RegisterComponents(allFoundComponents);
+                    var assemblyFiltersStr = configuration.GetOptional(ArchimedesPropertyKeys.ComponentScanAssemblies);
+                    var assemblyFilters = assemblyFiltersStr.Map(x => x.Split(',')).OrElse(new string[0]);
 
-                _container.RegisterInstance<IEnvironmentService>(_environmentService);
-                _container.RegisterInstance<ApplicationContext>(this);
+                    var configurer = new ComponentRegisterer(_container.Configuration);
+                    var allFoundComponents = ScanComponents(assemblyFilters);
+                    configurer.RegisterComponents(allFoundComponents);
 
-                _isAutoConfigured = true;
+                    _container.RegisterInstance<IEnvironmentService>(_environmentService);
+                    _container.RegisterInstance<ApplicationContext>(this);
 
-                OnContextInitialized(allFoundComponents);
+                    _isAutoConfigured = true;
+
+                    OnContextInitialized(allFoundComponents);
+                }
+                catch (Exception e)
+                {
+                    throw new ApplicationContextInitialisationException("Failed to initialize and configure application context!", e);
+                }
             }
         }
 
@@ -154,11 +161,19 @@ namespace Archimedes.Framework.Context
         /// </summary>
         private void InstantiateEagerComponents(IEnumerable<Type> components)
         {
+
             foreach (var componentType in components)
             {
                 if (IsEagerRequested(componentType))
                 {
-                    _container.Resolve(componentType);
+                    try
+                    {
+                        _container.Resolve(componentType);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new ApplicationContextException(string.Format("Failed to eager load component '{0}'!", componentType), e);
+                    }
                 }
             }
         }

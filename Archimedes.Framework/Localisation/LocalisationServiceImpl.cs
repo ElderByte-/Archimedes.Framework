@@ -17,6 +17,7 @@ namespace Archimedes.Framework.Localisation
     /// <summary>
     /// Manages the localisation of the current application
     /// </summary>
+    [Eager]
     [Service]
     public class LocalisationServiceImpl : LocalisationService
     {
@@ -31,8 +32,12 @@ namespace Archimedes.Framework.Localisation
 
         public LocalisationServiceImpl()
         {
-            Translator.TranslationProvider = this;
-            
+            Log.Info("Initializing Localisation...");
+
+            // Ensure the Translator shares our location service (avoids loading a language twice)
+            Translator.TranslationProvider = this;  
+
+            // Support for forced culture settings out of the box
             if (!string.IsNullOrEmpty(_defaultCulture))
             {
                 Log.Info(string.Format("Forceing culture '{0}'", _defaultCulture));

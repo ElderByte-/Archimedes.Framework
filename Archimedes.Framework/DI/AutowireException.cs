@@ -5,7 +5,7 @@ namespace Archimedes.Framework.DI
     /// <summary>
     /// Thrown when autowiring (injecting dependencies) has failed.
     /// </summary>
-    public class AutowireException : Exception
+    public class AutowireException : ElderBoxException
     {
 
         public AutowireException(string message) : base(message)

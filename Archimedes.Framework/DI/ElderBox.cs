@@ -47,13 +47,25 @@ namespace Archimedes.Framework.DI
 
         #endregion
 
+        #region Properties
+
         /// <summary>
-        /// Gets the container configuration
+        /// Exposes the container configuration
         /// </summary>
         public IModuleConfiguration Configuration
         {
             get { return _configuration;}
         }
+
+        /// <summary>
+        /// The name of the context of this container
+        /// </summary>
+        public string ContextName
+        {
+            get { return _name; }
+        }
+
+        #endregion
 
         #region Public methods
 
@@ -113,18 +125,11 @@ namespace Archimedes.Framework.DI
         }
 
         /// <summary>
-        /// The name of the context of this container
-        /// </summary>
-        public string ContextName
-        {
-            get { return _name; }
-        }
-
-        /// <summary>
         /// Auto wire fields / property dependencies which are annotated with <see cref="InjectAttribute"/> 
         /// Usefull if you have already an instance which could not be created using this DI container.
         /// </summary>
         /// <param name="instance"></param>
+        /// <exception cref="AutowireException">Thrown when autowiring of the given instance failed.</exception>
         [DebuggerStepThrough]
         public void Autowire(object instance)
         {
@@ -148,6 +153,7 @@ namespace Archimedes.Framework.DI
         /// </summary>
         /// <param name="instance"></param>
         /// <param name="unresolvedDependencies"></param>
+        /// <exception cref="AutowireException">Thrown when autowiring of the given instance failed.</exception>
         [DebuggerStepThrough]
         internal void Autowire(object instance, ISet<Type> unresolvedDependencies)
         {
@@ -247,7 +253,7 @@ namespace Archimedes.Framework.DI
 
             if (instance == null)
             {
-                throw new NotSupportedException("Something went wrong while resolving instance for type " + type.Name);
+                throw new ComponentCreationException("Something went wrong while resolving instance for type " + type.Name);
             }
 
             return instance;
@@ -322,7 +328,7 @@ namespace Archimedes.Framework.DI
             }
             else
             {
-                throw new AutowireException("Can not create instance for type '" + type.Name + "', no provider or factory found!");
+                throw new ComponentCreationException("Can not create instance for type '" + type.Name + "', no provider or factory found!");
             }
 
             return instance;
@@ -335,10 +341,23 @@ namespace Archimedes.Framework.DI
         /// <param name="unresolvedDependencies"></param>
         /// <param name="providedParameters"></param>
         /// <returns></returns>
+        /// <exception cref="ComponentCreationException"></exception>
         private object CreateInstance(IComponentFactory factory, ISet<Type> unresolvedDependencies, object[] providedParameters = null)
         {
-            var instance = factory.CreateInstance(this, unresolvedDependencies, providedParameters);
-            return OnPostConstruct(instance, ""); // TODO Component name
+            try
+            {
+                var instance = factory.CreateInstance(this, unresolvedDependencies, providedParameters);
+                return OnPostConstruct(instance, ""); // TODO Component name
+            }
+            catch (Exception e)
+            {
+                if (e is CircularDependencyException)
+                {
+                    throw;
+                }
+                throw new ComponentCreationException(string.Format("Failed to create instance using component builder '{0}'", factory), e);
+            }
+
         }
 
         private IEnumerable<Type> FetchImplementationTargets(Type implementation)
@@ -381,7 +400,7 @@ namespace Archimedes.Framework.DI
                 }
                 else
                 {
-                    throw new NotSupportedException("Could not resolve parameter " + parameterInfo.Name + " of " + contextInfo + ", the value was (null)!");
+                    throw new AutowireException("Could not resolve parameter " + parameterInfo.Name + " of " + contextInfo + ", the value was (null)!");
                 }
             }
             catch (Exception e)
@@ -434,7 +453,7 @@ namespace Archimedes.Framework.DI
         #endregion
 
 
-        #region Event handlers
+        #region Lifetime Event handlers
 
 
         /// <summary>
@@ -443,14 +462,21 @@ namespace Archimedes.Framework.DI
         /// <param name="component"></param>
         private object OnPostConstruct(object component, string name)
         {
-            component = OnBeforeInitialisation(component, name);
+            try
+            {
+                component = OnBeforeInitialisation(component, name);
 
-            // Initialisation callbacks
-            component = OnInitialisation(component, name);
+                // Initialisation callbacks
+                component = OnInitialisation(component, name);
 
-            component = OnAfterInitialisation(component, name);
+                component = OnAfterInitialisation(component, name);
 
-            return component;
+                return component;
+            }
+            catch (Exception e)
+            {
+                throw new PostConstructHandlerException(string.Format("Failed to handle post construct lifetime of component '{0}'", component.GetType().Name), e);
+            }
         }
 
         /// <summary>

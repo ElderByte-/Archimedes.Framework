@@ -2,7 +2,10 @@
 
 namespace Archimedes.Framework.DI
 {
-    public class CircularDependencyException : Exception
+    /// <summary>
+    /// Thrown when autowiring (injecting dependencies) has failed due to a circular dependency loop.
+    /// </summary>
+    public class CircularDependencyException : AutowireException
     {
 
         public CircularDependencyException(Type a, Type b) : this(a.Name + " depends on " + b.Name + " and vice versa (circular dependency). Fix that!")
