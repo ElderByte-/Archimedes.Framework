@@ -38,12 +38,13 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Archimedes.Patterns, Version=1.0.13.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Archimedes.Patterns.1.0.13.0\lib\net40\Archimedes.Patterns.dll</HintPath>
+    <Reference Include="Archimedes.Patterns, Version=1.0.15.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Archimedes.Patterns.1.0.15.0\lib\net40\Archimedes.Patterns.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.0.5813.39031, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -107,13 +108,14 @@
     <Compile Include="TestApplicationContext.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Archimedes.Framework\Archimedes.Framework.csproj">
       <Project>{49988901-c232-4f00-a8d5-9e844c6ad627}</Project>
       <Name>Archimedes.Framework</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
