@@ -89,12 +89,11 @@ namespace Archimedes.Framework.Test.ContainerTest
 
 
         [TestCase]
-        [ExpectedException(typeof(AmbiguousMappingException))]
         public void TestAmbigous()
         {
             var context = new ElderBox(GetConfiguration());
 
-            var imp = context.Resolve<IServiceAmbig>();
+            Assert.Throws<AmbiguousMappingException>(() => context.Resolve<IServiceAmbig>());
         }
 
         [TestCase]
