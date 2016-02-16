@@ -79,7 +79,7 @@ namespace Archimedes.Framework.AOP
                 }
             }
 
-            Log.Debug(string.Format("Ignored assemblies: {0}", Environment.NewLine + string.Join(Environment.NewLine, ignoredAssemblies)));
+            //Log.Debug(string.Format("Ignored assemblies: {0}", Environment.NewLine + string.Join(Environment.NewLine, ignoredAssemblies)));
 
             return foundTypes;
         }

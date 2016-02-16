@@ -41,8 +41,8 @@
       <HintPath>..\..\packages\Archimedes.Localisation.0.0.3.0\lib\net45\Archimedes.Localisation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Archimedes.Patterns, Version=1.0.15.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Archimedes.Patterns.1.0.15.0\lib\net40\Archimedes.Patterns.dll</HintPath>
+    <Reference Include="Archimedes.Patterns, Version=1.0.16.0, Culture=neutral, PublicKeyToken=61fc9f1c0f8e34d7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Archimedes.Patterns.1.0.16.0\lib\net40\Archimedes.Patterns.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
