@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Archimedes.Patterns;
+using Archimedes.Patterns.Utils;
 
 namespace Archimedes.Framework.ContextEnvironment.Properties
 {
     /// <summary>
-    /// Represents properties as a simple key-value store
+    /// Represents properties as a simple key-value store.
+    /// Provides several convinience methods to access and check property values.
     /// </summary>
     public class PropertyStore
     {
@@ -48,9 +51,11 @@ namespace Archimedes.Framework.ContextEnvironment.Properties
         /// <returns></returns>
         public string Get(string parameter)
         {
-            if (_parameters.ContainsKey(parameter.ToLower()))
+            var value = GetOptional(parameter);
+
+            if (value.IsPresent)
             {
-                return _parameters[parameter.ToLower()];
+                return value.Value;
             }
             throw new UnknownParameterException(parameter);
         }
@@ -68,6 +73,17 @@ namespace Archimedes.Framework.ContextEnvironment.Properties
                 return Optional.OfNullable(_parameters[parameter.ToLower()]);
             }
             return Optional.Empty<string>();
+        }
+
+        /// <summary>
+        /// Returns the properties value parsed as T.
+        /// If the parameter does not exists or can not be parsed to a T, returns an Empty Optional
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public Optional<T> GetOptional<T>(string parameter)
+        {
+            return GetOptional(parameter).FlatMap( x => ParseUtil.ParseSave<T>(x) );
         }
 
         /// <summary>
